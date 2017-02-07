@@ -1,0 +1,26 @@
+{
+  "name": "cf",
+  "version": "0.1.0",
+  "description": "This is the node.js/electron user frontend that interacts with the Go backend.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DistributedSolutions/CF.git"
+  },
+  "keywords": [
+    "blockchain",
+    "electron"
+  ],
+  "author": "Jesse Saran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DistributedSolutions/CF/issues"
+  },
+  "homepage": "https://github.com/DistributedSolutions/CF#readme",
+  "devDependencies": {
+    "eslint": "^3.15.0"
+  }
+}
