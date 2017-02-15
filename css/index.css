@@ -1,0 +1,21 @@
+.navbar-left {
+	width: 150px;
+	height: 100%;
+	position: fixed;
+	display: block;
+}
+
+.nav li{
+	width: 90%;
+	height: 50px;
+	margin: 10px 5px;
+	font-size: 20px;
+}
+
+#container {
+	display: block;
+	float: right;
+	width: 100%;
+	padding: 5px 5px;
+	padding-left: 150px;
+}

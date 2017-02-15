@@ -1,6 +1,7 @@
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
-const url = require('url')
+const {app, BrowserWindow} = require('electron');
+const path = require('path');
+const url = require('url');
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -8,14 +9,20 @@ let win
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
+  win = new BrowserWindow({
+    title: "CF",
+    width: 1200, 
+    height: 1200,
+    toolbar: false,
+  })
 
   // and load the index.html of the app.
   win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, 'html', 'index.html'),
     protocol: 'file:',
     slashes: true
   }))
+  // win.loadURL(`http://localhost:3333`);
 
   // Open the DevTools.
   win.webContents.openDevTools()
@@ -36,7 +43,7 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
+  // On macOS it is common for applications and their var sqlite3 = require('sqlite3').verbose();
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
