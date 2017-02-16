@@ -1,0 +1,23 @@
+<div class="containter">
+	<form class="form-inline">
+	<label class="mr-sm-2" for="inlineOrder">Group By</label>
+		<select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineOrder" ng-model="groupBy">
+			<option ng-selected="{{g.value == groupBy}}"></option>
+		</select>
+
+		<label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+			<input type="checkbox" class="custom-control-input">
+			<span class="custom-control-indicator"></span>
+			<span class="custom-control-description">Remember my preference</span>
+		</label>
+
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+	<h1>Menus</h1>
+	<ul class="list-group">
+		<li class="list-group-item" ng-repeat="t in tags">
+			{{t}}
+		</li>
+	</ul>
+	<p>Length: {{tags.length}}</p>
+</div>

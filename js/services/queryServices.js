@@ -45,33 +45,38 @@ var closeDB = function(db) {
 }
 
 angular.module("CFApp")
-	.service("interfaceDBService",
+	.service("interfaceDBService",[
 		function() {
 			console.log("Starting querying service");
 			var interfaceDB = this;
-			interfaceDB.db = createDB(DB_CONSTANTS.LOOKUP_DB.dbName, sqlite3.OPEN_READONLY);
-			// interfaceDB.loadTags = function(){
-			// 	var thisTag = [];
-			// 	interfaceDB.db.serialize(function(){
-			// 		interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
-			// 			if(err === null) {
-			// 				console.log("Successfully querried channel tags");
-			// 			} else {
-			// 				console.log("Error querrying channel tags [" + err + "]");
-			// 			}
-			// 			interfaceDB.channelTags = rows;
-			// 			thisTag = 4;
-			// 			interfaceDB.channelTags.push(4);
-			// 			interfaceDB.channelTags.push(r;
-			// 			console.log(interfaceDB.channelTags);
-			// 		});
-			// 		// interfaceDB.contentTags = interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTag);
-			// 		// console.log("here");
-			// 	});
-			// 	return thisTag;
-			// }
+
+			interfaceDB.loadChannelTags = function(fn){
+				var loadScope = this;
+				interfaceDB.db.serialize(function(){
+					interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
+						if(err === null) {
+							console.log("Successfully querried channel tags");
+						} else {
+							console.log("Error querrying channel tags [" + err + "]");
+						}
+						return fn(rows);
+					});
+				});
+			}
+			interfaceDB.loadContentTags = function(fn) {
+				interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
+					interfaceDB.contentTags = interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTag, function(err,rows) {
+						if(err === null) {
+							console.log("Successfully querried content tags");
+						} else {
+							console.log("Error querrying content tags [" + err + "]");
+						}
+						return fn(rows);
+					});
+				});
+			}
 
 			interfaceDB.init = function() {
-				// interfaceDB.loadTags();
+				interfaceDB.db = createDB(DB_CONSTANTS.LOOKUP_DB.dbName, sqlite3.OPEN_READONLY);
 			}
-		});
+		}]);
