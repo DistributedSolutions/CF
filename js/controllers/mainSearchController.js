@@ -4,6 +4,7 @@ angular.module("CFApp")
 			var mainSearchScope = $scope;
 
 			mainSearchScope.init = function() {
+				mainSearchScope.groupBy = ['Tags', 'Channels']
 				interfaceDBService.loadChannelTags(function(tags){
 					mainSearchScope.tags = tags;
 					mainSearchScope.$apply();
