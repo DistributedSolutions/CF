@@ -1,8 +1,9 @@
 .navbar-left {
 	width: 200px;
+	padding-right: 10px;
 	height: 100%;
 	position: fixed;
-	display: block;
+	border-right: solid 1px #f4f141;
 }
 
 .nav li{
@@ -16,5 +17,5 @@
 	display: block;
 	float: right;
 	width: 100%;
-	padding-left: 200px;
+	padding-left: 210px;
 }
