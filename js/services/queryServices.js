@@ -1,82 +1,195 @@
-const os = require('os');
-const path = require('path');
-const url = require('url');
-const sqlite3 = require('sqlite3').verbose();
+// const os = require('os');
+// const path = require('path');
+// const url = require('url');
+// const sqlite3 = require('sqlite3').verbose();
 
-var DB_CONSTANTS = {
-	DIR_HOME : os.homedir(),
-	LOOKUP_DB : { 
-		dbName : '.DistroSols/sql.db',
-		tableNames : {
-			channel : 'channel',
-			channelTag : 'channelTag',
-			channelTagRel : 'channelTagRel',
-			content : 'content',
-			contentTag : 'contentTag',
-			contentTagRel : 'contentTagRel',
-			playlist : 'playlist',
-			playlistContentRel : 'playlistContentRel'
-		}
-	}
-}
+// var DIR_CONSTANTS = {
+// 	HOME : os.homedir(),
+// 	PRIVATE_DIR : '.DistroSols',
+// 	TORRENT_DIR : 'torrents'
+// }
 
-var createDB = function(dbName, mode) {
-	console.log("Creating/opening DB here [" + path.join(DB_CONSTANTS.DIR_HOME, dbName) + "]");
-	var db = new sqlite3.Database(path.join(DB_CONSTANTS.DIR_HOME, dbName), mode, 
-		function(err) {
-			if(err === null) {
-				console.log("Successfully created/opened DB with name [" + dbName + "] and mode [" + mode + "]");
-			} else {
-				console.log("Error creating/opening DB [" + err + "]");
-			}
-	});
-	return db;
-}
+// var DB_CONSTANTS = {
+// 	LOOKUP_DB : { 
+// 		dbName : 'sql.db',
+// 		tableNames : {
+// 			channel : 'channel',
+// 			channelTag : 'channelTag',
+// 			channelTagRel : 'channelTagRel',
+// 			content : 'content',
+// 			contentTag : 'contentTag',
+// 			contentTagRel : 'contentTagRel',
+// 			playlist : 'playlist',
+// 			playlistContentRel : 'playlistContentRel'
+// 		}
+// 	},
+// 	TORRENT_DB : {
+// 		dbName : 'torrent.db',
+// 		tableNames : {
+// 			torrent : 'torrent',
+// 		}
+// 	}
+// }
 
-var closeDB = function(db) {
-	db.closeDB(
-		function(err) {
-			if(err === null) {
-				console.log("Successfully closed DB with name [" + dbName + "] and mode [" + mode + "]");
-			} else {
-				console.log("Error closing DB [" + err + "]");
-			}
-		});
-}
+// var createDB = function(dbName, mode) {
+// 	console.log("Creating/opening DB here [" + path.join(DIR_CONSTANTS.HOME, DIR_CONSTANTS.PRIVATE_DIR, dbName) + "]");
+// 	var db = new sqlite3.Database(path.join(DIR_CONSTANTS.HOME, DIR_CONSTANTS.PRIVATE_DIR, dbName), mode, 
+// 		function(err) {
+// 			if(err) {
+// 				console.log("CREATEDB: Error creating/opening DB [" + JSON.stringify(err) + "]");
+// 			} else {
+// 				console.log("Successfully created/opened DB with name [" + dbName + "] and mode [" + mode + "]");
+// 			}
+// 	});
+// 	return db;
+// }
 
-angular.module("CFApp")
-	.service("interfaceDBService",[
-		function() {
-			console.log("Starting querying service");
-			var interfaceDB = this;
+// var closeDB = function(db) {
+// 	db.closeDB(
+// 		function(err) {
+// 			if(err === null) {
+// 				console.log("Successfully closed DB with name [" + dbName + "] and mode [" + mode + "]");
+// 			} else {
+// 				console.log("CLOSEDB: Error closing DB [" + JSON.stringify(err) + "]");
+// 			}
+// 		});
+// }
 
-			interfaceDB.loadChannelTags = function(fn){
-				var loadScope = this;
-				interfaceDB.db.serialize(function(){
-					interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
-						if(err === null) {
-							console.log("Successfully querried channel tags");
-						} else {
-							console.log("Error querrying channel tags [" + err + "]");
-						}
-						return fn(rows);
-					});
-				});
-			}
-			interfaceDB.loadContentTags = function(fn) {
-				interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
-					interfaceDB.contentTags = interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTag, function(err,rows) {
-						if(err === null) {
-							console.log("Successfully querried content tags");
-						} else {
-							console.log("Error querrying content tags [" + err + "]");
-						}
-						return fn(rows);
-					});
-				});
-			}
+// angular.module("CFApp")
+// 	.service("interfaceDBService",[
+// 		function() {
+// 			console.log("Starting querying service");
+// 			var interfaceDB = this;
 
-			interfaceDB.init = function() {
-				interfaceDB.db = createDB(DB_CONSTANTS.LOOKUP_DB.dbName, sqlite3.OPEN_READONLY);
-			}
-		}]);
+// 			interfaceDB.loadChannelTags = function(fn){
+// 				var loadScope = this;
+// 				interfaceDB.db.serialize(function(){
+// 					interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
+// 						if(err === null) {
+// 							console.log("Successfully querried channel tags");
+// 						} else {
+// 							console.log("interfaceDBService: Error querrying channel tags [" + JSON.stringify(err) + "]");
+// 						}
+// 						return fn(rows);
+// 					});
+// 				});
+// 			}
+// 			interfaceDB.loadContentTags = function(fn) {
+// 				interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
+// 					interfaceDB.contentTags = interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTag, function(err,rows) {
+// 						if(err === null) {
+// 							console.log("Successfully querried content tags");
+// 						} else {
+// 							console.log("interfaceDBService: Error querrying content tags [" + JSON.stringify(err) + "]");
+// 						}
+// 						return fn(rows);
+// 					});
+// 				});
+// 			}
+
+// 			interfaceDB.init = function() {
+// 				interfaceDB.db = createDB(DB_CONSTANTS.LOOKUP_DB.dbName, sqlite3.OPEN_READONLY);
+// 			}
+// 		}]);
+
+// angular.module("CFApp")
+// 	.service("torrentDBService", ["$log",
+// 		function($log) {
+// 			var torrentDBScope = this;
+// 			torrentDBScope.initTables = function(fn) {
+// 				var s = "SELECT COUNT(name) AS c FROM sqlite_master WHERE type='table' AND name='" + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + "';"
+// 				torrentDBScope.db.get(s, (err, row) => {
+// 					$log.debug("Rows returned on start [" + JSON.stringify(row) + "]");
+// 					if(err) {
+// 						$log.error("TorrentDBService: Error retrieving if db exists [" + JSON.stringify(err) + "]");
+// 					} else {
+// 						if (row.c != 1) {
+// 							$log.debug("Creating torrent table");
+// 							var s = "CREATE TABLE " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + " (" +
+// 								"infoHash CHAR(40) PRIMARY KEY," +
+// 								"name VARCHAR(300)," + 
+// 								"path VARCHAR(300)," + 
+// 								"noPeersError BOOLEAN," + 
+// 								"done BOOLEAN," + 
+// 								"progress DECIMAL(10,9));";
+// 							torrentDBScope.db.exec(s, function(err) {
+// 									if(err) {
+// 										$log.error("TorrentDBService: Error creating torrent table [" + JSON.stringify(err) + "]")
+// 									} else {
+// 										fn();
+// 									}
+// 								});
+// 						} else {
+// 							fn();
+// 						}
+// 					}
+// 				});
+// 			}
+
+// 			torrentDBScope.getAllTorrents = function(fn) {
+// 				var s = "SELECT * FROM " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent;
+// 				torrentDBScope.db.all(s, (err, rows) => {
+// 					if(err) {
+// 						$log.error("TorrentDBService: Error loading table information [" + JSON.stringify(err) + "]");
+// 					} else {
+// 						fn(rows);
+// 					}
+// 				});
+// 			}
+
+// 			torrentDBScope.torrentExists = function(infoHash,fn) {
+// 				var s = "SELECT * FROM " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
+// 					" WHERE infoHash = ?";
+// 				torrentDBScope.db.serialize(function() {
+// 					torrentDBScope.db.get(s, infoHash, (err,row) => {
+// 						if(err) {
+// 							$log.error("TorrentDBService: Error checking if table row exists [" + JSON.stringify(err) + "]");
+// 						} else {
+// 							fn(row);
+// 						}
+// 					});
+// 				});
+// 			}
+
+// 			torrentDBScope.addTorrent = function(torrent) {
+// 				var s = "INSERT INTO " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
+// 					" (infoHash, name, path, done, progress) VALUES(?, ?, ?, ?, ?);";
+// 				torrentDBScope.db.run(s, torrent.infoHash, torrent.name, torrent.path, torrent.done, torrent.progress, (err) => {
+// 					if(err) {
+// 						$log.error("TorrentDBService: Error inserting hash into db [" + JSON.stringify(err) + "]");
+// 					} else {
+// 						$log.debug("TorrentDBService: Added in torrent to db [" + torrent.infoHash + "]");
+// 					}
+// 				});
+// 			}
+
+// 			torrentDBScope.errorTorrent = function(torrent) {
+// 				var s = "UPDATE " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
+// 					" SET noPeersError = ? WHERE infoHash = ?;";
+// 				torrentDBScope.db.run(s, true, torrent.infoHash, (err) => {
+// 					if(err) {
+// 						$log.error("TorrentDBService: Error updating torrent [" + JSON.stringify(err) + "]");
+// 					} else {
+// 						$log.debug("TorrentDBService: Error torrent db infohash [" + torrent.infoHash + "]");
+// 					}
+// 				});
+// 			}
+
+// 			torrentDBScope.updateTorrent = function(torrent) {
+// 				var s = "UPDATE " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
+// 					" SET done = ?, progress = ? WHERE infoHash = ?;";
+// 				torrentDBScope.db.run(s, torrent.done, torrent.progress, torrent.infoHash, (err) => {
+// 					if(err) {
+// 						$log.error("TorrentDBService: Error updating torrent [" + JSON.stringify(err) + "]");
+// 					} else {
+// 						// $log.debug("TorrentDBService: Updated torrent db infohash [" + torrent.infoHash + "]");
+// 					}
+// 				});
+// 			}
+
+// 			torrentDBScope.init = function (fn) {
+// 				torrentDBScope.db = createDB(DB_CONSTANTS.TORRENT_DB.dbName, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
+// 				torrentDBScope.initTables(fn);
+// 			}
+// 		}
+// 		]);

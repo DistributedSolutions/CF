@@ -3,28 +3,23 @@ var mainApp=angular.module("CFApp",["ngRoute"]);
 mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider
 	.when("/",{
-		templateUrl : "mainSearch.html",
+		templateUrl : "../html/mainSearch.html",
 		controller : "mainSearchController",
 	})
 	.when("/settings",{
-		templateUrl : "settingsChoice.html",
+		templateUrl : "../html/settingsChoice.html",
 		controller : "settingsController",
 	})
 	.when("/settings/:id", {
-		templateUrl : "settings.html",
+		templateUrl : "../html/settings.html",
 		controller : "settingsController",
 	})
 	.when("/torrent", {
-		templateUrl : "torrent.html",
+		templateUrl : "../html/torrent.html",
 		controller : "torrentController",
-	})
-	.otherwise({
-		template : "<p>otherwise</p>"
 	});
-	$locationProvider.html5Mode({
-		enabled: false,
-		requireBase: false
-	});
+	
+	$locationProvider.html5Mode({enabled: false, requireBase: false});
 }]);
 
 
