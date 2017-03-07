@@ -1,8 +1,8 @@
 const {app, BrowserWindow} = require('electron');
-const torrentDB = require('./backend/torrentDB.js');
 const pathway = require('path');
 const url = require('url');
 const os = require('os');
+const log = require('./backend/log.js')
 
 require('electron-context-menu')({
     prepend: (params, browserWindow) => [{
@@ -11,10 +11,6 @@ require('electron-context-menu')({
         visible: params.mediaType === 'image'
     }]
 });
-
-
-var WebTorrent = require('webtorrent');
-var client = new WebTorrent();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -54,13 +50,10 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   if (win === undefined) {
-    console.log("App Ready!");
-    torrentDB.initDB(() => {
-      createWindow();
-      initAddAllTorrents();
-    });
+    log.log(log.INFO, "App Ready!");
+    createWindow();
   }
-  console.log("App Ready DONE! [" + win + "]");
+  log.log(log.INFO, "App Ready DONE! [" + win + "]");
 });
 
 // Quit when all windows are closed.
@@ -83,148 +76,9 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-
-var TORRENT_DIR = pathway.join(os.homedir(),".DistroSols","torrents");
-
-function clientAddTorrent(infoHash, torrentFile) {
-    var torrent;
-    if(torrentFile) {
-      console.log('Client-Add-Torrent: HAS TORRENT FILE');
-      torrent = client.add(torrentFile, { path : pathway.join(TORRENT_DIR, infoHash) }, (torrent) => {
-
-      });
-    } else {
-      console.log('Client-Add-Torrent: NO TORRENT FILE');
-      torrent = client.add(infoHash, { path : pathway.join(TORRENT_DIR, infoHash) }, (torrent) => {
-
-      });
-    }
-    console.log("Client-Add-Torrent: About to add torrent [" + torrent + "]");
-    if (torrent) {
-      torrent.on('warning', (err) =>
-        console.log("Torrent-Object: warning [" + infoHash + "] :" + JSON.stringify(err.message)));
-      torrent.on('error', (err) =>
-        console.log("Torrent-Object: error [" + infoHash + "] :" + JSON.stringify(err.message)));
-      torrent.on('ready', () => {
-        console.log("Torrent-Object: ready [" + infoHash + "] [" + torrent.received + "] storing blob");
-        if(!torrentFile) {
-          //there is no torrent file, must save blob
-          torrentDB.saveTorrentBlob(torrent);
-        }
-      });
-      torrent.on('done', function() {
-        console.log("Torrent-Object: done [" + infoHash + "]");
-      });
-      // Got torrent metadata! 
-      console.log('Add-Torrent: Starting download of torrent with infoHash[' + infoHash + ']');
-      torrent.on("download", function(bytes) {
-        // console.log("Update-Torrent: [" + infoHash + "] [" + bytes + "] [" + Date() + ']');
-        win.webContents.send("update-for-torrent", getTorrentData(torrent));
-        torrentDB.updateTorrent(torrent);
-      });
-      torrent.on("noPeers", function(announceType) {
-        console.log("Torrent-Object:  No Peers Found for torrent [" + torrent.infoHash + "] announceType [" + announceType + "]");
-        // torrentDB.errorTorrent(torrent);
-        win.webContents.send("noPeers-for-torrent", getTorrentData(torrent));
-       });
-      torrent.on("error", (err) => {
-        console.log("Torrent-Object: Error with torrent [" + JSON.stringify(err) + "]");
-        win.webContents.send("error-for-torrent", getTorrentData(torrent));
-      });
-      torrent.on("done", function() {
-        console.log("Torrent-Object: Done Downloading torrent [" + torrent.infoHash + "]");
-        torrentDB.updateTorrent(torrent);
-        win.webContents.send("done-for-torrent", getTorrentData(torrent));
-      });
-      torrent.on("metadata", function() {
-        console.log("Torrent-Object: metadata [" + torrent.magnetLink + "]");
-      });
-    } else {
-      console.log('Client-Add-Torrent: Torrent not created!!!!!!!!!!!!!!!!');
-    }
-}
-
-
-function addTorrent(infoHash) {
-  if(infoHash) {
-    infoHash = infoHash.toLowerCase();
-  }
-  torrentDB.getTorrent(infoHash, (row) => {
-    console.log("Add-Torrent [" + infoHash + "]");
-    if(row) {
-      if(row.done) {
-        console.log("Add-Torrent row is done [" + row.done + "] not adding.");
-      } else {
-        console.log("Add-Torrent row is not done [" + row.done + "] attempting to add again.");
-        clientAddTorrent(infoHash, row.torrentFile);
-      }
-    } else {
-      console.log("Add-Torrent torrent is new.");
-      torrentDB.addTorrent({
-        infoHash: infoHash, 
-        path: pathway.join(TORRENT_DIR, infoHash)
-      });
-      clientAddTorrent(infoHash);
-    }
-  });
-}
-
-function initAddAllTorrents() {
-  console.log("Init-Add-All-Torrents: Adding in torrents");
-  torrentDB.getAllTorrents((rows) => {
-    if (rows) {
-      console.log("Init-Add-All-Torrents: in DB amount [" + rows.length + "]");
-      var arr = [];
-      for(var i = 0; i < rows.length; i++) {
-        console.log("Init-Add-All-Torrents: Adding in torrent with infoHash [" + rows[i].infoHash + "]");
-        addTorrent(rows[i].infoHash, rows[i].torrentFile);
-      }
-    } else {
-      console.log("Init-Add-All-Torrents: No Torrents exist in DB");
-    }
-  });
-}
-
-function getTorrentData(torrent) {
-  return {
-    name: torrent.name,
-    infoHash: torrent.infoHash,
-    downloadSpeed: torrent.downloadSpeed,
-    path: torrent.path,
-    progress: torrent.progress,
-    done : torrent.done,
-    link : torrent.magnetURI
-  }
-}
-
-app.on('add-torrent', (event, infoHash) => {
-  console.log("Backend: add-torrent");
-  addTorrent(infoHash);
-});
-
 //IPCMAIN
 const {ipcMain} = require('electron');
 
-ipcMain.on('get-all-torrents', (event) => {
-  console.log("Backend: get-all-torrents");
-  torrentDB.getAllTorrents((rows) => {
-    var tempR = [];
-    for(var i = 0; i < rows.length; i++) {
-      tempR.push(getTorrentData(rows[i]));
-    }
-    event.sender.send('get-all-torrents-reply', tempR);
-  });
-});
-
-ipcMain.on('stop-torrent', (event, infoHash) => {
-  console.log("Backend: stop-torrent [" + infoHash + "]");
-  const t = client.get(infoHash);
-  if(t) {
-    t.destroy();
-  }
-});
-
-ipcMain.on('start-torrent', (event, infoHash) => {
-  console.log("Backend: start-torrent [" + infoHash + "] [" + client.torrents.length + "]");
-  addTorrent(infoHash);
-});
+// ipcMain.on('get-all-torrents', (event) => {
+//     event.sender.send('get-all-torrents-reply', tempR);
+// });

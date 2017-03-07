@@ -5,7 +5,6 @@ const sqlite3 = require('sqlite3').verbose();
 
 var CONSTANTS = {
 	DB_DIR: pathway.join(os.homedir(),".DistroSols"),
-	TORRENT_DIR: pathway.join(os.homedir(),".DistroSols","torrents"),
 	LOOKUP_DB : { 
 		dbName : 'sql.db',
 		tableNames : {

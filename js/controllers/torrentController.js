@@ -56,31 +56,31 @@
 // 	}
 // 	]);
 angular.module("CFApp")
-.controller("torrentController",["$scope", "$routeParams", "$log", "torrentService",
-	function($scope, $routeParams, $log, torrentService){
+.controller("torrentController",["$scope", "$routeParams", "$log",
+	function($scope, $routeParams, $log){
 		var torrentScope = $scope;
-		torrentScope.torrents = torrentService.getTorrents();
-		torrentScope.$watch('torrentService.getTorrents()', function(newValue) {
-			if(newValue) {
-				torrentScope.torrents = newValue;
-			}
-			console.log("NEW VALUE [" + newValue + "]");
-		}, true);
+		// torrentScope.torrents = torrentService.getTorrents();
+		// torrentScope.$watch('torrentService.getTorrents()', function(newValue) {
+		// 	if(newValue) {
+		// 		torrentScope.torrents = newValue;
+		// 	}
+		// 	console.log("NEW VALUE [" + newValue + "]");
+		// }, true);
 
 		torrentScope.setMoreInfo = function(torrent) {
-			torrentScope.torrentInfo = torrent;
+			// torrentScope.torrentInfo = torrent;
 		}
 
 		torrentScope.addNewTorrent = function() {
-			torrentService.addTorrent(torrentScope.infoHash);
+			// torrentService.addTorrent(torrentScope.infoHash);
 		}
 
 		torrentScope.addTorrent = function() {
-			torrentService.addTorrent(torrentScope.torrentInfo.infoHash);
+			// torrentService.addTorrent(torrentScope.torrentInfo.infoHash);
 		}
 
 		torrentScope.stopTorrent = function() {
-			torrentService.stopTorrent(torrentScope.torrentInfo.infoHash);
+			// torrentService.stopTorrent(torrentScope.torrentInfo.infoHash);
 		}
 	}
 	]);

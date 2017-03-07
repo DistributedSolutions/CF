@@ -123,60 +123,60 @@
 		// 	torrentScope.loadAllTorrents();
 		// }
 
-const {ipcRenderer} = require('electron');
+// const {ipcRenderer} = require('electron');
 
-angular.module("CFApp")
-.service("torrentService",["$log", "$rootScope",
-		function($log, $rootScope) {
-			var torrentScope = this;
-			torrentScope.init = function() {
-				torrentScope.torrents = [];
-				ipcRenderer.on('get-all-torrents-reply', (event, torrents) => {
-					$log.debug('Retrieved all torrents [' + JSON.stringify(torrents) + ']');
-					$rootScope.$apply(() => {
-						torrentScope.torrents = torrents;
-					});
-				});
-				ipcRenderer.send('get-all-torrents');
-				ipcRenderer.on('update-for-torrent', (event, torrent) => {
-					$log.debug('Updated torrents [' + JSON.stringify(torrent) + ']');
-					torrentScope.updateTorrent(torrent);
-				});
-			}
+// angular.module("CFApp")
+// .service("torrentService",["$log", "$rootScope",
+// 		function($log, $rootScope) {
+// 			var torrentScope = this;
+// 			torrentScope.init = function() {
+// 				torrentScope.torrents = [];
+// 				ipcRenderer.on('get-all-torrents-reply', (event, torrents) => {
+// 					$log.debug('Retrieved all torrents [' + JSON.stringify(torrents) + ']');
+// 					$rootScope.$apply(() => {
+// 						torrentScope.torrents = torrents;
+// 					});
+// 				});
+// 				ipcRenderer.send('get-all-torrents');
+// 				ipcRenderer.on('update-for-torrent', (event, torrent) => {
+// 					$log.debug('Updated torrents [' + JSON.stringify(torrent) + ']');
+// 					torrentScope.updateTorrent(torrent);
+// 				});
+// 			}
 
-			torrentScope.updateTorrent = function(torrent) {
-				var found = false;
-				for(var i = 0; i < torrentScope.torrents.length; i++) {
-					if(torrentScope.torrents[i].infoHash === torrent.infoHash) {
-						torrentScope.torrents[i].name = torrent.name;
-						torrentScope.torrents[i].infoHash = torrent.infoHash;
-						torrentScope.torrents[i].downloadSpeed = torrent.downloadSpeed;
-						torrentScope.torrents[i].path = torrent.path;
-						torrentScope.torrents[i].progress = torrent.progress;
-						torrentScope.torrents[i].done = torrent.done;
-						torrentScope.torrents[i].link = torrent.link;
-						$log.info('Updating torrent [' + torrent.infoHash + ']');
-						$rootScope.$apply(() => {
-							torrentScope.torrents;
-						});
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					torrentScope.torrents.push(torrent);
-				}
-			}
+// 			torrentScope.updateTorrent = function(torrent) {
+// 				var found = false;
+// 				for(var i = 0; i < torrentScope.torrents.length; i++) {
+// 					if(torrentScope.torrents[i].infoHash === torrent.infoHash) {
+// 						torrentScope.torrents[i].name = torrent.name;
+// 						torrentScope.torrents[i].infoHash = torrent.infoHash;
+// 						torrentScope.torrents[i].downloadSpeed = torrent.downloadSpeed;
+// 						torrentScope.torrents[i].path = torrent.path;
+// 						torrentScope.torrents[i].progress = torrent.progress;
+// 						torrentScope.torrents[i].done = torrent.done;
+// 						torrentScope.torrents[i].link = torrent.link;
+// 						$log.info('Updating torrent [' + torrent.infoHash + ']');
+// 						$rootScope.$apply(() => {
+// 							torrentScope.torrents;
+// 						});
+// 						found = true;
+// 						break;
+// 					}
+// 				}
+// 				if (!found) {
+// 					torrentScope.torrents.push(torrent);
+// 				}
+// 			}
 
-			torrentScope.getTorrents = function(){
-				return torrentScope.torrents;
-			}
+// 			torrentScope.getTorrents = function(){
+// 				return torrentScope.torrents;
+// 			}
 
-			torrentScope.addTorrent = function(infoHash) {
-				ipcRenderer.send('start-torrent', infoHash);
-			}
+// 			torrentScope.addTorrent = function(infoHash) {
+// 				ipcRenderer.send('start-torrent', infoHash);
+// 			}
 
-			torrentScope.stopTorrent = function(infoHash) {
-				ipcRenderer.send('stop-torrent', infoHash);
-			}
-	}]);
+// 			torrentScope.stopTorrent = function(infoHash) {
+// 				ipcRenderer.send('stop-torrent', infoHash);
+// 			}
+// 	}]);

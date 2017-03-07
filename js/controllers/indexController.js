@@ -11,9 +11,9 @@
 // 		]);
 
 angular.module("CFApp")
-	.controller("indexController",["$scope", "torrentService",
-		function($scope,torrentService){
+	.controller("indexController",["$scope", "interfaceDBService",
+		function($scope,interfaceDBService){
 			var indexScope = $scope;
-			torrentService.init();
+			interfaceDBService.init();
 		}
 		]);
