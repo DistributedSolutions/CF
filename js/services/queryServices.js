@@ -95,6 +95,22 @@ angular.module("CFApp")
 				});
 			}
 
+			interfaceDB.getTopChannelsForTag = function(tagId, fn) {
+				var s = "SELECT c.channelHash AS hash FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channel + " AS c " +
+						"INNER JOIN " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTagRel + " AS cTR ON cTR.c_id = c.channelHash " +
+						"WHERE cTR.ct_id = ?"
+				interfaceDB.db.all(s, tagId,function(err, rows) {
+					if(err === null) {
+						console.log("Successfully querried top channels");
+					} else {
+						console.log("interfaceDBService: Error querrying content tags [" + JSON.stringify(err) + "] with query [" + s + "]");
+					}
+					if (fn) {
+						return fn(rows);
+					}
+				});
+			}
+
 			interfaceDB.channelChange = function() {
 				return interfaceDB.channelTags;
 			}
@@ -118,6 +134,30 @@ angular.module("CFApp")
 			}
 		}]);
 
+angular.module("CFApp")
+	.service("jsonRPCService",["$rootScope", "$http",
+		function($rootScope, $http) {
+			var jsonRpcScope = this;
+			jsonRpcScope.id = 0;
+			//--- INIT STATICS
+			jsonRpcScope.hostApi = "localhost:8080/api";
+
+			jsonRpcScope.getChannel = "get-channel";
+			//-----------
+
+			jsonRpcScope.getJsonRpc = function(method, params) {
+				return {
+					jsonrpc: "2.0",
+					id: jsonRpcScope.id++,
+					method: method,
+					params: params
+				}
+			}
+
+			// jsonRPCScope.httpRequest = function(jsonRPC) {
+			// 	return $http.
+			// }
+		}]);
 // angular.module("CFApp")
 // 	.service("torrentDBService", ["$log",
 // 		function($log) {
