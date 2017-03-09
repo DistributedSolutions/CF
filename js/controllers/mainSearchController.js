@@ -15,9 +15,9 @@
 // 		}
 // 	]);
 angular.module("CFApp")
-	.controller("mainSearchController",["$scope", "$routeParams", "interfaceDBService", "$http", "jsonRPCService", "$log",
-		function($scope, $routeParams, interfaceDBService, $http, jsonRPCService, $log){
-			var mainSearchScope = $scope;
+.controller("mainSearchController",["$scope", "$routeParams", "interfaceDBService", "$http", "jsonRPCService", "$log",
+	function($scope, $routeParams, interfaceDBService, $http, jsonRPCService, $log){
+		var mainSearchScope = $scope;
 			//init
 			mainSearchScope.interfaceDBService = interfaceDBService;
 			mainSearchScope.channelTags = interfaceDBService.channelTags;
@@ -36,39 +36,62 @@ angular.module("CFApp")
 				}
 			});
 
-			mainSearchScope.channels = []
-			mainSearchScope.content = []
-			mainSearchScope.tagsChannels = []
-
 			mainSearchScope.ops = ["Channel", "Content"];
 			mainSearchScope.selectedOp = mainSearchScope.ops[0]
 			//----
 
 			mainSearchScope.getTopChannelsForTags = function(tags) {
-				angular.forEach(tags, (tag, index) => {
+				angular.forEach(tags, (tag, tagIndex) => {
+					if (tagIndex) {
+
 					//go through each tags given
 					interfaceDBService.getTopChannelsForTag(tag.id, (rows) => {
-						$log.info("Row count [" + rows.length + "] for tag.id [" + tag.id + "]");
-						//go through each row and request for the hash
-						angular.forEach(rows, (row, index) => {
-							//get the hash from each row and make a request for each channel
-							var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getChannel, row.hash)
-							$http.post(jsonRPCSCope.hostApi, rpc)
-								.then((res) => {
+						if (!rows) {
+							return;
+						}
+						$log.debug("Row count [" + rows.length + "] for tag.id [" + tag.id + "]");
+						var rpcRows = [];
+						angular.forEach(rows, (row) => {
+							rpcRows.push(row.hash);
+						});
+						//request all the rows of things :) all of the things!!
+						var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getChannels, {hashlist: rpcRows});
+						$log.debug("Sending request [" + JSON.stringify(rpc) + "]");
+						$http(rpc)
+						.then((res) => {
+							if (res.data.error) {
+									//error in rpc
+									$log.error("Error in channels tag req for channels: [" + tag + "] error: [" + JSON.parse(res.error) + "]");
+								} else {
 									//success
-									$log.info("Success in channel tag req for tag: [" + tag + "]")
-									mainSearchScope.tagsChannels.push({tag: tag.name, res: res})
-								}, (res) => {
-									//error
-									$log.info("Error in channel tag req for tag: [" + tag + "]")
-								});
-						})
+									var tempArr = [];
+									var count = 0;
+									//groups by 4
+									angular.forEach(res.data.result, (channel, i) => {
+										if(i % 4 == 0 || i == 0) {
+											tempArr.push([]);
+											count++;
+										}
+										tempArr[count-1].push(channel);
+									});
+									$log.info("Success in channels tag req for channels: [" + tag + "] [" + tempArr.length + "]");
+									mainSearchScope.tags[tagIndex].channels = tempArr;
+								}
+							}, (res) => {
+								//error on call SHOULD NEVER HAPPEN
+								$log.error("Error in channels tag req for channels: [" + tag + "]");
+							});
 					})
-				})
+				}
+			})
+			}
+
+			mainSearchScope.groupBy4 = function(tags) {
+
 			}
 
 			mainSearchScope.getTopContentForTags = function(tags) {
 
 			}
 		}
-	]);
+		]);

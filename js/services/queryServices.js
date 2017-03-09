@@ -140,18 +140,26 @@ angular.module("CFApp")
 			var jsonRpcScope = this;
 			jsonRpcScope.id = 0;
 			//--- INIT STATICS
-			jsonRpcScope.hostApi = "localhost:8080/api";
+			jsonRpcScope.hostApi = "http://localhost:8080/api";
 
 			jsonRpcScope.getChannel = "get-channel";
+			jsonRpcScope.getChannels = "get-channels";
 			//-----------
 
 			jsonRpcScope.getJsonRpc = function(method, params) {
-				return {
+				var rpc = JSON.stringify({
 					jsonrpc: "2.0",
 					id: jsonRpcScope.id++,
 					method: method,
 					params: params
-				}
+				});
+						console.log("JSONRPC [" + rpc + "]")
+				return {
+					method: "POST",
+					url: jsonRpcScope.hostApi,
+					data: rpc,
+					headers: {'Content-Type': 'application/json'}
+				};
 			}
 
 			// jsonRPCScope.httpRequest = function(jsonRPC) {
