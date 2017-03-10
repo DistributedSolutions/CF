@@ -57,13 +57,13 @@ var closeDB = function(db) {
 }
 
 angular.module("CFApp")
-	.service("interfaceDBService",["$rootScope",
-		function($rootScope) {
+	.service("interfaceDBService",["$rootScope", "$log",
+		function($rootScope, $log) {
 			console.log("Starting querying service");
 			var interfaceDB = this;
 			//setup of interfaceDB
-			interfaceDB.contentTags = [];
 			interfaceDB.channelTags = [];
+			interfaceDB.contentTags = [];
 			//--------------------
 
 
@@ -72,21 +72,22 @@ angular.module("CFApp")
 				interfaceDB.db.serialize(function(){
 					interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
 						if(err === null) {
-							console.log("Successfully querried channel tags");
+							$log.log("Successfully querried channel tags");
 						} else {
-							console.log("interfaceDBService: Error querrying channel tags [" + JSON.stringify(err) + "]");
+							$log.error("interfaceDBService: Error querrying channel tags [" + JSON.stringify(err) + "]");
 						}
 						return fn(rows);
 					});
 				});
 			}
+
 			interfaceDB.loadContentTags = function(fn) {
 				interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
 					interfaceDB.contentTags = interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTag, function(err,rows) {
 						if(err === null) {
-							console.log("Successfully querried content tags");
+							$log.log("Successfully querried content tags");
 						} else {
-							console.log("interfaceDBService: Error querrying content tags [" + JSON.stringify(err) + "]");
+							$log.error("InterfaceDBService: Error querrying content tags [" + JSON.stringify(err) + "]");
 						}
 						if (fn) {
 							return fn(rows);	
@@ -101,9 +102,25 @@ angular.module("CFApp")
 						"WHERE cTR.ct_id = ?"
 				interfaceDB.db.all(s, tagId,function(err, rows) {
 					if(err === null) {
-						console.log("Successfully querried top channels");
+						$log.log("Successfully querried top channels");
 					} else {
-						console.log("interfaceDBService: Error querrying content tags [" + JSON.stringify(err) + "] with query [" + s + "]");
+						$log.error("InterfaceDBService: Error querrying top channel for tags [" + JSON.stringify(err) + "] with query [" + s + "]");
+					}
+					if (fn) {
+						return fn(rows);
+					}
+				});
+			}
+
+			interfaceDB.getTopContentsForTag = function(tagId, fn) {
+				var s = "SELECT c.contentHash AS hash FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.content + " AS c " +
+						"INNER JOIN " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTagRel + " AS cTR ON cTR.c_id = c.contentHash " +
+						"WHERE cTR.ct_id = ?"
+				interfaceDB.db.all(s, tagId,function(err, rows) {
+					if(err === null) {
+						$log.log("Successfully querried top contents");
+					} else {
+						$log.error("InterfaceDBService: Error querrying top content for tags [" + JSON.stringify(err) + "] with query [" + s + "]");
 					}
 					if (fn) {
 						return fn(rows);
@@ -122,12 +139,12 @@ angular.module("CFApp")
 			interfaceDB.init = function() {
 				interfaceDB.db = createDB(DB_CONSTANTS.LOOKUP_DB.dbName, sqlite3.OPEN_READONLY);
 				interfaceDB.loadChannelTags((rows) => {
-					console.log("ChannelTags: " + JSON.stringify(rows));
-					interfaceDB.channelTags = rows;
+					$log.log("ChannelTags: " + JSON.stringify(rows));
+					interfaceDB.channelTags = rows;	
 					$rootScope.$apply();
 				});
 				interfaceDB.loadContentTags((rows) => {
-					console.log("ContentTags: " + JSON.stringify(rows));
+					$log.log("ContentTags: " + JSON.stringify(rows));
 					interfaceDB.contentTags = rows;
 					$rootScope.$apply();
 				});
@@ -144,6 +161,8 @@ angular.module("CFApp")
 
 			jsonRpcScope.getChannel = "get-channel";
 			jsonRpcScope.getChannels = "get-channels";
+			jsonRpcScope.getContent = "get-content";
+			jsonRpcScope.getContents = "get-contents";
 			//-----------
 
 			jsonRpcScope.getJsonRpc = function(method, params) {
@@ -153,7 +172,7 @@ angular.module("CFApp")
 					method: method,
 					params: params
 				});
-						console.log("JSONRPC [" + rpc + "]")
+				// console.log("JSONRPC [" + rpc + "]")
 				return {
 					method: "POST",
 					url: jsonRpcScope.hostApi,
