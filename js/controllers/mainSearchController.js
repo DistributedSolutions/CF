@@ -78,7 +78,7 @@ angular.module("CFApp")
 									$log.error("Error in contents tag req for contents: [" + tag + "] error: [" + JSON.stringify(res.data.error) + "]");
 								} else {
 									//success
-									var tempArr = mainSearchScope.groupBy4(res.data.result);
+									var tempArr = mainSearchScope.groupBy4(res.data.result.contentlist);
 									$log.info("Success in contents tag req for contents: [" + tag + "] [" + tempArr.length + "]");
 									mainSearchScope.contentTags[tagIndex].content = tempArr;
 								}
