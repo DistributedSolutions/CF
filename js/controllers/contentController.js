@@ -12,11 +12,9 @@ angular.module("CFApp")
 					$log.error("Error in content request key: [" + contentKey + "] error: [" + JSON.stringify(res.data.error) + "]");
 				} else {
 					//success
-					// var tempArr = groupBy4(res.data.result.contentlist);
 					$log.info("Success in content for res data: [" + res.data + "]");
-					// mainSearchScope.contentTags[tagIndex].content = tempArr;
-					channelScope.content = JSON.stringify(res.data, null, 2);
-					// $log.info("YES [" +  + "]");
+					channelScope.content = res.data.result
+					channelScope.contentString = JSON.stringify(res.data.result, null, 2);
 				}
 			}, (res) => {
 				//error on call SHOULD NEVER HAPPEN
@@ -24,8 +22,8 @@ angular.module("CFApp")
 			});
 		}
 
-		// START
+		//-START-
 		channelScope.content = {};
 		channelScope.getContent($routeParams.key);
-		//------
+		//-------
 	}]);

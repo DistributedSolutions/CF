@@ -4,6 +4,7 @@
 	height: 100%;
 	position: fixed;
 	border-right: solid 1px #f4f141;
+	background: white;
 }
 
 .nav li{
@@ -20,6 +21,7 @@
 	padding-left: 210px;
 }
 
+/*Scrollable table*/
 .bodycontainer { 
 	max-height: 450px; 
 	width: 100%; 

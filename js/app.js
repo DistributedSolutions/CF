@@ -7,10 +7,6 @@ mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 		controller : "mainSearchController",
 	})
 	.when("/settings",{
-		templateUrl : "../html/settingsChoice.html",
-		controller : "settingsController",
-	})
-	.when("/settings/:id", {
 		templateUrl : "../html/settings.html",
 		controller : "settingsController",
 	})

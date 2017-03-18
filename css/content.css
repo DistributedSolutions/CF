@@ -1,0 +1,20 @@
+.panelDesc {
+	overflow-wrap: break-word;
+}
+
+.panelTitle {
+	text-overflow: ellipsis;
+    display: block;
+    overflow: hidden;
+}
+
+.tags {
+	margin-right: 3px;
+}
+
+/*Video*/
+video {
+	width: 50%    !important;
+	height: auto   !important;
+	background: black;
+}
