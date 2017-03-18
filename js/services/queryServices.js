@@ -148,6 +148,7 @@ angular.module("CFApp")
 					interfaceDB.contentTags = rows;
 					$rootScope.$apply();
 				});
+				$log.info("Finished init for interface.")
 			}
 		}]);
 

@@ -42,7 +42,7 @@ angular.module("CFApp")
 									$log.error("Error in channels tag req for channels: [" + tag + "] error: [" + JSON.stringify(res.data.error) + "]");
 								} else {
 									//success
-									var tempArr = mainSearchScope.groupBy4(res.data.result);
+									var tempArr = groupBy4(res.data.result);
 									$log.info("Success in channels tag req for channels: [" + tag + "] [" + tempArr.length + "]");
 									mainSearchScope.channelTags[tagIndex].channels = tempArr;
 								}
@@ -78,7 +78,7 @@ angular.module("CFApp")
 									$log.error("Error in contents tag req for contents: [" + tag + "] error: [" + JSON.stringify(res.data.error) + "]");
 								} else {
 									//success
-									var tempArr = mainSearchScope.groupBy4(res.data.result.contentlist);
+									var tempArr = groupBy4(res.data.result.contentlist);
 									$log.info("Success in contents tag req for contents: [" + tag + "] [" + tempArr.length + "]");
 									mainSearchScope.contentTags[tagIndex].content = tempArr;
 								}
@@ -89,20 +89,6 @@ angular.module("CFApp")
 					});
 				}
 			});
-		}
-
-		mainSearchScope.groupBy4 = function(data) {
-			var tempArr = [];
-			var count = 0;
-			//groups by 4
-			angular.forEach(data, (e, i) => {
-				if(i % 4 == 0 || i == 0) {
-					tempArr.push([]);
-					count++;
-				}
-				tempArr[count-1].push(e);
-			});
-			return tempArr;
 		}
 
 		//init
@@ -125,6 +111,12 @@ angular.module("CFApp")
 
 		mainSearchScope.ops = ["Channels", "Content"];
 		mainSearchScope.selectedOp = mainSearchScope.ops[0]
+		if (mainSearchScope.channelTags) {
+			mainSearchScope.getTopChannelsForTags(mainSearchScope.channelTags);
+		}
+		if (mainSearchScope.contentTags) {
+			mainSearchScope.getTopContentForTags(mainSearchScope.contentTags);
+		}
 		//----
 	}
 ]);

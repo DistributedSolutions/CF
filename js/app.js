@@ -17,6 +17,22 @@ mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 	.when("/torrent", {
 		templateUrl : "../html/torrent.html",
 		controller : "torrentController",
+	})
+	.when("/content/", {
+		templateUrl : "../html/content.html",
+		controller : "contentController",
+	})
+	.when("/content/:key", {
+		templateUrl : "../html/content.html",
+		controller : "contentController",
+	})
+	.when("/channel/", {
+		templateUrl : "../html/channel.html",
+		controller : "channelController",
+	})
+	.when("/channel/:key", {
+		templateUrl : "../html/channel.html",
+		controller : "channelController",
 	});
 	
 	$locationProvider.html5Mode({enabled: false, requireBase: false});

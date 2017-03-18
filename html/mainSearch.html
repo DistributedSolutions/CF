@@ -1,18 +1,3 @@
-<style type="text/css">
-	.thumbnail img{
-		width: 100px;
-		height: auto;
-		display: block;
-	}
-	.thumbnail:hover{
-		cursor: pointer;
-		background-color: rgba(0,0,0,.3);
-	}
-	.thumbnail img:hover {
-		transform: scale(1.3) translate(0px,10px);
-	}
-</style>
-
 <div class="container-fluid">
 	<div class="page-header">
 		<h1>CF <small>Go ahead...search the world</small></h1>
@@ -41,12 +26,14 @@
 						<div ng-class="($index==0 ? ('item active') : 'item')" ng-repeat="channelChunk in t.channels">
 							<div class="row">
 								<div class="col-sm-3" ng-repeat="channel in channelChunk">
-									<div class="thumbnail">
-										<img src="../hello_world.gif">
-										<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
-											<h3>{{channel.title}}</h3>
+									<a href="#!/channel/{{channel.rootchain}}">
+										<div class="carouselCell thumbnail">
+											<img src="../hello_world.gif">
+											<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
+												<h3>{{channel.title}}</h3>
+											</div>
 										</div>
-									</div>
+									</a>
 								</div>
 							</div>
 						</div>
@@ -75,12 +62,14 @@
 						<div ng-class="($index==0 ? ('item active') : 'item')" ng-repeat="contentChunk in t.content">
 							<div class="row">
 								<div class="col-sm-3" ng-repeat="content in contentChunk">
-									<div class="thumbnail">
-										<img src="../hello_world.gif">
-										<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
-											<h3>{{content.title}}</h3>
+									<a href="#!/content/{{content.contentchain}}">
+										<div class="carouselCell thumbnail">
+											<img src="../hello_world.gif">
+											<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
+												<h3>{{content.title}}</h3>
+											</div>
 										</div>
-									</div>
+									</a>
 								</div>
 							</div>
 						</div>

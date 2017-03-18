@@ -12,3 +12,18 @@ var commaSeparate = function(arr) {
 	}
 	return s;
 }
+
+
+var groupBy4 = function(data) {
+	var tempArr = [];
+	var count = 0;
+	//groups by 4
+	angular.forEach(data, (e, i) => {
+		if(i % 4 == 0 || i == 0) {
+			tempArr.push([]);
+			count++;
+		}
+		tempArr[count-1].push(e);
+	});
+	return tempArr;
+}
