@@ -41,6 +41,12 @@ td {
 }
 
 /*Scrollable list of playlists*/
+.carouselCell {
+	text-overflow: ellipsis;
+    display: block;
+    overflow: hidden;
+}
+
 .carouselCell img{
 	width: 100px;
 	height: auto;

@@ -13,8 +13,8 @@ angular.module("CFApp")
 				} else {
 					//success
 					$log.info("Success in channel for res data: [" + res.data + "]");
-					channelScope.channel = JSON.stringify(res.data, null, 2);
-					// $log.info("YES [" +  + "]");
+					channelScope.channel = res.data.result;
+					channelScope.channelString = JSON.stringify(res.data.result, null, 2);
 				}
 			}, (res) => {
 				//error on call SHOULD NEVER HAPPEN

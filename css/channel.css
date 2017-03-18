@@ -3,7 +3,7 @@
 }
 
 .panelTitle {
-	text-overflow: ellipsis;
+	overflow-wrap: break-word;
 	display: block;
 	overflow: hidden;
 }
@@ -12,9 +12,7 @@
 	margin-right: 3px;
 }
 
-/*Video*/
-video {
-	width: 50%    !important;
-	height: auto   !important;
-	background: black;
+img {
+	width: 100%;
+	object-fit: contain;
 }

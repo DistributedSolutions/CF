@@ -1,6 +1,41 @@
+<link rel="stylesheet" href="../css/channel.css">
+
 <div class="container-fluid">
-	<div class="page-header">
-		<h1>Channel<small></small></h1>
+
+	<div class="row">
+		<div class="col-sm-12">
+		<img src="../hello_world.gif" style="">
+		</div>
 	</div>
-	{{channel}}
+	<div class="page-header">
+		<h1>Channel <small></small></h1>
+		<h3 class="panelTitle"> Title: {{channel.title}} </h3>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Channel Information</h3>
+		</div>
+		<div class="panel-body">
+			<p class="panelDesc">
+				Description: {{channel.longdesc}}
+			</p>
+			<hr />
+			<p class="panelDesc">
+				Created: {{channel.creationtime}}
+			</p>
+			<hr />
+			<p class="panelDesc">
+				Site: {{channel.site}}
+			</p>
+			<hr />
+			<p class="panelDesc">
+				Tags:
+				<span ng-repeat="x in channel.tags.tags" class="label label-default tags">
+					{{x}}
+				</span>
+			</p>
+		</div>
+	</div>
+	<br />
+	<!-- {{channelString}} -->
 </div>
