@@ -26,7 +26,7 @@
 							<div class="col-sm-3" ng-repeat="channel in channelChunk">
 								<a href="#!/channel/{{channel.rootchain}}">
 									<div class="carouselCell thumbnail">
-										<img src="../hello_world.gif">
+										<img src="data:image/png;base64,{{channel.thumbnail.image}}">
 										<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
 											<h3>{{channel.title}}</h3>
 										</div>
@@ -60,7 +60,7 @@
 							<div class="col-sm-3" ng-repeat="content in contentChunk">
 								<a href="#!/content/{{content.contentchain}}">
 									<div class="carouselCell thumbnail">
-										<img src="../hello_world.gif">
+										<img src="data:image/png;base64,{{content.thumbnail.image}}">
 										<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
 											<h3>{{content.title}}</h3>
 										</div>
