@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, globalShortcut} = require('electron');
 const pathway = require('path');
 const url = require('url');
 const os = require('os');
@@ -53,6 +53,31 @@ app.on('ready', () => {
     log.log(log.INFO, "App Ready!");
     createWindow();
   }
+
+
+
+  //LEFT
+  var ret = globalShortcut.register("CommandOrControl+Shift+Left", () => {
+    if (win) {
+      win.webContents.send('historyBack', 'back'); 
+    }
+  });
+  if (!ret) {
+    log.log(log.ERROR, "Register left failed.");
+  }
+  log.log(log.INFO, globalShortcut.isRegistered("CommandOrControl+Shift+Left"));
+
+  //RIGHT
+  ret = globalShortcut.register("CommandOrControl+Shift+Right", () => {
+    if (win) {
+      win.webContents.send('historyForward', 'true');
+    }
+  });
+  if (!ret) {
+    log.log(log.ERROR, "Register right failed.");
+  }
+  log.log(log.INFO, globalShortcut.isRegistered("CommandOrControl+Shift+Right"));
+  
   log.log(log.INFO, "App Ready DONE! [" + win + "]");
 });
 

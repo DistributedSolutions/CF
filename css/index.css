@@ -3,7 +3,7 @@
 	padding-right: 10px;
 	height: 100%;
 	position: fixed;
-	border-right: solid 1px #f4f141;
+	border-right: solid 1px #D3D3D3;
 	background: white;
 }
 
@@ -42,9 +42,14 @@ td {
 
 /*Scrollable list of playlists*/
 .carouselCell {
-	text-overflow: ellipsis;
-    display: block;
+    word-break: break-all;
+    text-overflow: ellipsis;
+	text-align: center;
     overflow: hidden;
+
+    min-height: 200px;
+    max-height: 200px;
+    margin-bottom: 0px;
 }
 
 .carouselCell img{

@@ -56,6 +56,16 @@ var closeDB = function(db) {
 		});
 }
 
+const {ipcRenderer} = require('electron');
+ipcRenderer.on('historyForward', (event, torrent) => {
+	console.log("History Forward");
+	window.history.forward();
+});
+ipcRenderer.on('historyBack', (event, torrent) => {
+	console.log("History Back");
+	window.history.back();
+});
+
 angular.module("CFApp")
 	.service("interfaceDBService",["$rootScope", "$log",
 		function($rootScope, $log) {

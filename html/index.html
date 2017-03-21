@@ -23,6 +23,7 @@
   <script src="../html/mainSearch.html"></script>
   <script src="../html/search.html"></script>
   <script src="../html/torrent.html"></script>
+  <script src="../html/profiles.html"></script>
 
   <!-- Main -->
   <script src="../js/app.js"></script>
@@ -39,6 +40,7 @@
   <script src="../js/controllers/torrentController.js"></script>
   <script src="../js/controllers/channelController.js"></script>
   <script src="../js/controllers/contentController.js"></script>
+  <script src="../js/controllers/profilesController.js"></script>
 
   <!-- Include the latest version of WebTorrent -->
   <!-- <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script> -->
@@ -49,18 +51,17 @@
   <div class="navbar-left" ng-controller="indexController">
     <ul class="nav nav-pills nav-invert">
       <li><a href="#!/"><span>Search</span></a></li>
-      <li><a href="#!/switch_profile"><span> Profile 1 </span></a></li>
-      <li><a href="#!/switch_profile"><span> Profile 2 </span></a></li>
-      <li><a href="#!/switch_profile"><span> Profile 3 </span></a></li>
+      <li><a href="#!/profiles"><span>Profiles</span></a></li>
       <li><a href="#!/settings"><span>Settings</span></a></li>
       <li><a href="#!/torrent"><span>Torrents</span></a></li>
     </ul>
   </div>
   <div id="container">
     <p>
-      Current location is: {{$ctrl}}<br>
+      Current location is: {{$ctrl}}<brv>
     </p>
-    <div ng-view></div>
+    <div ng-view>
+    <div><p>hi</p></div></div>
   </div>
 </body>
 </html>
