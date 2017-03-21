@@ -48,20 +48,29 @@
   <!-- <script src="http://momentjs.com/downloads/moment.min.js"></script> -->
 </head>
 <body ng-app="CFApp">
-  <div class="navbar-left" ng-controller="indexController">
-    <ul class="nav nav-pills nav-invert">
-      <li><a href="#!/"><span>Search</span></a></li>
-      <li><a href="#!/profiles"><span>Profiles</span></a></li>
-      <li><a href="#!/settings"><span>Settings</span></a></li>
-      <li><a href="#!/torrent"><span>Torrents</span></a></li>
-    </ul>
+  <div ng-controller="indexController">
+    <div class="navbar-left">
+      <ul class="nav nav-pills nav-invert">
+        <li><a href="#!/"><span>Search</span></a></li>
+        <li><a href="#!/profiles"><span>Profiles</span></a></li>
+        <li><a href="#!/settings"><span>Settings</span></a></li>
+        <li><a href="#!/torrent"><span>Torrents</span></a></li>
+      </ul>
+    </div>
+    <div id="container">
+      <p>
+        Current location is: {{$ctrl}}<brv>
+      </p>
+      <button class="btn" ng-click="historyBack();">
+        History Back: <span class="glyphicon glyphicon-menu-left"></span>  
+      </button>
+      <button class="btn" ng-click="historyForward();">
+        History Forward: <span class="glyphicon glyphicon-menu-right"></span>
+      </button>
+    </div>
   </div>
   <div id="container">
-    <p>
-      Current location is: {{$ctrl}}<brv>
-    </p>
-    <div ng-view>
-    <div><p>hi</p></div></div>
+    <div ng-view></div>
   </div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const {app, BrowserWindow, globalShortcut} = require('electron');
+const {app, BrowserWindow, globalShortcut, Menu, MenuItem} = require('electron');
 const pathway = require('path');
 const url = require('url');
 const os = require('os');
@@ -11,6 +11,21 @@ require('electron-context-menu')({
         visible: params.mediaType === 'image'
     }]
 });
+
+
+const menu = new Menu();
+menu.append(new MenuItem({
+  label: 'History Back',
+  accelerator: 'CmdOrCtrl+Left',
+  click: () => { log.log(log.INFO, "Left History Local"); win.webContents.send('historyBack', 'back'); }
+}))
+menu.append(new MenuItem({
+  label: 'History Forward',
+  accelerator: 'CmdOrCtrl+Right',
+  click: () => { log.log(log.INFO, "Right History Local"); win.webContents.send('historyForward', 'forward'); }
+}))
+
+Menu.setApplicationMenu(menu)
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -54,31 +69,29 @@ app.on('ready', () => {
     createWindow();
   }
 
+  // // LEFT
+  // var ret = globalShortcut.register("CommandOrControl+Left", () => {
+  //   if (win) {
+  //     win.webContents.send('historyBack', 'back'); 
+  //   }
+  // });
+  // if (!ret) {
+  //   log.log(log.ERROR, "Register left failed.");
+  // }
+  // log.log(log.INFO, globalShortcut.isRegistered("CommandOrControl+Shift+Left"));
 
-
-  //LEFT
-  var ret = globalShortcut.register("CommandOrControl+Shift+Left", () => {
-    if (win) {
-      win.webContents.send('historyBack', 'back'); 
-    }
-  });
-  if (!ret) {
-    log.log(log.ERROR, "Register left failed.");
-  }
-  log.log(log.INFO, globalShortcut.isRegistered("CommandOrControl+Shift+Left"));
-
-  //RIGHT
-  ret = globalShortcut.register("CommandOrControl+Shift+Right", () => {
-    if (win) {
-      win.webContents.send('historyForward', 'true');
-    }
-  });
-  if (!ret) {
-    log.log(log.ERROR, "Register right failed.");
-  }
-  log.log(log.INFO, globalShortcut.isRegistered("CommandOrControl+Shift+Right"));
+  // //RIGHT
+  // ret = globalShortcut.register("CommandOrControl+Right", () => {
+  //   if (win) {
+  //     win.webContents.send('historyForward', 'true');
+  //   }
+  // });
+  // if (!ret) {
+  //   log.log(log.ERROR, "Register right failed.");
+  // }
+  // log.log(log.INFO, globalShortcut.isRegistered("CommandOrControl+Shift+Right"));
   
-  log.log(log.INFO, "App Ready DONE! [" + win + "]");
+  // log.log(log.INFO, "App Ready DONE! [" + win + "]");
 });
 
 // Quit when all windows are closed.
