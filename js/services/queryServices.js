@@ -5,12 +5,11 @@ const sqlite3 = require('sqlite3').verbose();
 
 var DIR_CONSTANTS = {
 	HOME : os.homedir(),
-	PRIVATE_DIR : '.DistroSols',
-	TORRENT_DIR : 'torrents'
+	PRIVATE_DIR : '.DistroSols'
 }
 
 var DB_CONSTANTS = {
-	LOOKUP_DB : { 
+	INTERFACE_DB : { 
 		dbName : 'sql.db',
 		tableNames : {
 			channel : 'channel',
@@ -23,10 +22,10 @@ var DB_CONSTANTS = {
 			playlistContentRel : 'playlistContentRel'
 		}
 	},
-	TORRENT_DB : {
-		dbName : 'torrent.db',
+	LOCAL_DB : {
+		dbName : 'local.db',
 		tableNames : {
-			torrent : 'torrent',
+			profiles : 'profiles',
 		}
 	}
 }
@@ -69,7 +68,7 @@ ipcRenderer.on('historyBack', (event, torrent) => {
 angular.module("CFApp")
 	.service("interfaceDBService",["$rootScope", "$log",
 		function($rootScope, $log) {
-			console.log("Starting querying service");
+			console.log("Starting interfaceDB service");
 			var interfaceDB = this;
 			//setup of interfaceDB
 			interfaceDB.channelTags = [];
@@ -80,7 +79,7 @@ angular.module("CFApp")
 			interfaceDB.loadChannelTags = function(fn){
 				var loadScope = this;
 				interfaceDB.db.serialize(function(){
-					interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
+					interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.INTERFACE_DB.tableNames.channelTag,function(err, rows) {
 						if(err === null) {
 							$log.log("Successfully querried channel tags");
 						} else {
@@ -92,8 +91,8 @@ angular.module("CFApp")
 			}
 
 			interfaceDB.loadContentTags = function(fn) {
-				interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTag,function(err, rows) {
-					interfaceDB.contentTags = interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTag, function(err,rows) {
+				interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.INTERFACE_DB.tableNames.channelTag,function(err, rows) {
+					interfaceDB.contentTags = interfaceDB.db.all("SELECT * FROM " + DB_CONSTANTS.INTERFACE_DB.tableNames.contentTag, function(err,rows) {
 						if(err === null) {
 							$log.log("Successfully querried content tags");
 						} else {
@@ -107,8 +106,8 @@ angular.module("CFApp")
 			}
 
 			interfaceDB.getTopChannelsForTag = function(tagId, fn) {
-				var s = "SELECT c.channelHash AS hash FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.channel + " AS c " +
-						"INNER JOIN " + DB_CONSTANTS.LOOKUP_DB.tableNames.channelTagRel + " AS cTR ON cTR.c_id = c.channelHash " +
+				var s = "SELECT c.channelHash AS hash FROM " + DB_CONSTANTS.INTERFACE_DB.tableNames.channel + " AS c " +
+						"INNER JOIN " + DB_CONSTANTS.INTERFACE_DB.tableNames.channelTagRel + " AS cTR ON cTR.c_id = c.channelHash " +
 						"WHERE cTR.ct_id = ?"
 				interfaceDB.db.all(s, tagId,function(err, rows) {
 					if(err === null) {
@@ -123,8 +122,8 @@ angular.module("CFApp")
 			}
 
 			interfaceDB.getTopContentsForTag = function(tagId, fn) {
-				var s = "SELECT c.contentHash AS hash FROM " + DB_CONSTANTS.LOOKUP_DB.tableNames.content + " AS c " +
-						"INNER JOIN " + DB_CONSTANTS.LOOKUP_DB.tableNames.contentTagRel + " AS cTR ON cTR.c_id = c.contentHash " +
+				var s = "SELECT c.contentHash AS hash FROM " + DB_CONSTANTS.INTERFACE_DB.tableNames.content + " AS c " +
+						"INNER JOIN " + DB_CONSTANTS.INTERFACE_DB.tableNames.contentTagRel + " AS cTR ON cTR.c_id = c.contentHash " +
 						"WHERE cTR.ct_id = ?"
 				interfaceDB.db.all(s, tagId,function(err, rows) {
 					if(err === null) {
@@ -147,7 +146,7 @@ angular.module("CFApp")
 			}
 
 			interfaceDB.init = function() {
-				interfaceDB.db = createDB(DB_CONSTANTS.LOOKUP_DB.dbName, sqlite3.OPEN_READONLY);
+				interfaceDB.db = createDB(DB_CONSTANTS.INTERFACE_DB.dbName, sqlite3.OPEN_READONLY);
 				interfaceDB.loadChannelTags((rows) => {
 					$log.log("ChannelTags: " + JSON.stringify(rows));
 					interfaceDB.channelTags = rows;	
@@ -159,6 +158,80 @@ angular.module("CFApp")
 					$rootScope.$apply();
 				});
 				$log.info("Finished init for interface.")
+			}
+		}]);
+
+angular.module("CFApp")
+	.service("localDBService",["$rootScope", "$log",
+		function($rootScope, $log) {
+			console.log("Starting localDB service");
+			var localDBScope = this;
+			//setup of localDB
+			//--------------------
+
+			localDBScope.saveProfile = function(user, fn) {
+				if (user.data == null) {
+					user.data = {};
+				}
+				if (user.username == null) {
+					$log.error("ERROR adding profile, no username given.");
+					return;
+				}
+				localDBScope.db.run("INSERT OR REPLACE INTO " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " (username,data) VALUES(?,?)", 
+						user.username, JSON.stringify(user.data), (err) => {
+					if(err) {
+						$log.error("localDBService: Error saveProfile to localDB [" + JSON.stringify(err) + "]");
+					}
+					if(fn) {
+						fn();
+					}
+				});
+			}
+
+			localDBScope.loadProfile = function(username, fn) {
+				if(!username) {
+					$log.error("localDBService: username has bad value [" + username + "]");
+				}
+				var s = "SELECT * FROM " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " WHERE username = ?";
+				localDBScope.db.get(s, username, function(err, row) {
+					if(err === null) {
+						$log.log("Successfully querried localDB profile");
+					} else {
+						$log.error("localDBService: Error querrying profile [" + JSON.stringify(err) + "] with querry [" + s + "]");
+					}
+					if (fn) {
+						return fn(row);	
+					}
+				});
+			}
+
+			localDBScope.loadAllProfiles = function(fn) {
+				var s = "SELECT * FROM " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles;
+				localDBScope.db.all(s,function(err, rows) {
+					if(err === null) {
+						$log.log("Successfully querried localDB Profiles");
+					} else {
+						$log.error("localDBService: Error querrying profiles [" + JSON.stringify(err) + "] with querry [" + s + "]");
+					}
+					if (fn) {
+						return fn(rows);	
+					}
+				});
+			}
+
+			localDBScope.setUpTables = function() {
+				localDBScope.db.run("CREATE TABLE IF NOT EXISTS " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " (username CHAR(100) PRIMARY KEY, data TEXT);", (err) => {
+					if(err) {
+						$log.error("localDBService: Error creating localDB table. [" + JSON.stringify(err) + "]");
+					}
+				});
+
+			}
+
+			localDBScope.init = function() {
+				localDBScope.db = createDB(DB_CONSTANTS.LOCAL_DB.dbName, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
+				localDBScope.setUpTables();
+				$log.info("Finished init for localDB.")
 			}
 		}]);
 

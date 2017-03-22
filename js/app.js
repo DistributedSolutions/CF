@@ -10,6 +10,10 @@ mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 		templateUrl : "../html/profiles.html",
 		controller : "profilesController",
 	})
+	.when("/profiles/:username", {
+		templateUrl : "../html/profile.html",
+		controller : "profileController",
+	})
 	.when("/settings",{
 		templateUrl : "../html/settings.html",
 		controller : "settingsController",

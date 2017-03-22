@@ -16,12 +16,12 @@ require('electron-context-menu')({
 const menu = new Menu();
 menu.append(new MenuItem({
   label: 'History Back',
-  accelerator: 'CmdOrCtrl+Left',
+  accelerator: 'Alt+Left',
   click: () => { log.log(log.INFO, "Left History Local"); win.webContents.send('historyBack', 'back'); }
 }))
 menu.append(new MenuItem({
   label: 'History Forward',
-  accelerator: 'CmdOrCtrl+Right',
+  accelerator: 'Alt+Right',
   click: () => { log.log(log.INFO, "Right History Local"); win.webContents.send('historyForward', 'forward'); }
 }))
 
