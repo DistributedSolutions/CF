@@ -14,17 +14,13 @@ angular.module("CFApp")
 		}
 
 		profileScope.createNewChannel = function() {
-			profileScope.channelCopy = {
-				playlist: {
-					playlists: []
-				}
-			};
+			profileScope.channelCopy = profileScope.channelCopyTemplate;
 			profileScope.tab = 0;
 			profileScope.showSelectedChannel = true;
 		}
 
 		profileScope.addPlaylist = function() {
-				if (profileScope.newPlaylistName) {
+			if (profileScope.newPlaylistName.trim().length > 0) {
 				profileScope.channelCopy.playlist.playlists.push({
 					title: profileScope.newPlaylistName,
 					playlist: []
@@ -40,22 +36,41 @@ angular.module("CFApp")
 		profileScope.addPlaylistItem = function(playlistIndex) {
 			var tempPlaylistItem = $('#newPlaylistItemHash' + playlistIndex);
 			var value = tempPlaylistItem.val();
-			profileScope.channelCopy.playlist.playlists[playlistIndex].playlist.push(value);
-			tempPlaylistItem.val('');
+			if (value.length > 0) {
+				profileScope.channelCopy.playlist.playlists[playlistIndex].playlist.push(value);
+				tempPlaylistItem.val('');
+			}
 		}
 
 		profileScope.removePlaylistItem = function(playlistIndex, playlistItemIndex) {
 			profileScope.channelCopy.playlist.playlists[playlistIndex].playlist.splice(playlistItemIndex,1);
 		}
 
+		profileScope.addSuggestedChannel = function() {
+			if (profileScope.newSuggestedChannelHash.trim().length > 0) {
+				profileScope.channelCopy.suggestedchannels.hashlist.push(
+					profileScope.newSuggestedChannelHash
+					);
+				profileScope.newSuggestedChannelHash = "";
+			}
+		}
+
+		profileScope.removeSuggestedChannel = function(index) {
+			profileScope.channelCopy.suggestedchannels.hashlist.splice(index,1);
+		}
+
 		// START
 		profileScope.username = $routeParams.username;
 		profileScope.loadProfile(profileScope.username);
-		profileScope.channelCopy = {
+		profileScope.channelCopyTemplate = {
 			playlist: {
 				playlists: []
+			},
+			suggestedchannels : {
+				hashlist : []
 			}
 		};
+		profileScope.channelCopy = profileScope.channelCopyTemplate;
 		profileScope.showSelectedChannel = false;
 		profileScope.tab = 0;
 		//------

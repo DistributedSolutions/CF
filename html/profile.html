@@ -62,7 +62,7 @@
 					<div class="form-group">
 						<label for="playlist">Playlist:</label>
 						<p ng-show="channelCopy.playlist.playlists.length == 0">
-							No playlists found
+							No Playlists Set
 						</p>
 						<ul class="list-group" id="playlist">
 							<li class="list-group-item" ng-repeat="p in channelCopy.playlist.playlists">
@@ -73,7 +73,7 @@
 										</p>
 									</div>
 									<div class="col-sm-2">
-										<button class="btn btn-small btn-danger" ng-click="removePlaylist($index)">
+										<button class="btn btn-md btn-danger" ng-click="removePlaylist($index)">
 											Remove Playlist
 										</button>
 									</div>
@@ -81,7 +81,7 @@
 										<input id="newPlaylistItemHash{{$index}}" type="text" class="form-control" placeholder="Content hash..." style="display:inline-block;">
 									</div>
 									<div class="col-sm-3">
-										<button class="btn btn-small btn-success" ng-click="addPlaylistItem($index)">
+										<button class="btn btn-md btn-success" ng-click="addPlaylistItem($index)">
 											Add Content Hash to Playlist
 										</button>
 									</div>
@@ -110,7 +110,7 @@
 						</ul>
 						<div class="row">
 							<div class="col-sm-8">
-								<input ng-model="newPlaylistName" type="text" class="form-control" placeholder="Content hash...">
+								<input ng-model="newPlaylistName" type="text" class="form-control" placeholder="Playlist name...">
 							</div>
 							<div class="col-sm-2">
 								<button class="btn" ng-click="addPlaylist()">
@@ -129,13 +129,35 @@
 					</div>
 					<div class="form-group">
 						<label for="suggestedchannels">Suggested Channels:</label>
+						<p ng-show="channelCopy.suggestedchannels.hashlist == 0">
+							No Suggested Channels Set
+						</p>
 						<ul class="list-group" id="suggestedchannels">
-							<li class="list-group-item active">Cras justo odio</li>
-							<li class="list-group-item">Dapibus ac facilisis in</li>
-							<li class="list-group-item">Morbi leo risus</li>
-							<li class="list-group-item">Porta ac consectetur ac</li>
-							<li class="list-group-item">Vestibulum at eros</li>
+							<li class="list-group-item" ng-repeat="s in channelCopy.suggestedchannels.hashlist track by $index">
+								<div class="row">
+									<div class="col-sm-2">
+										<p>
+											{{s}}
+										</p>
+									</div>
+									<div class="col-sm-2">
+										<button class="btn btn-sm btn-danger" ng-click="removeSuggestedChannel($index)">
+											Remove Suggested Channel
+										</button>
+									</div>
+								</div>
+							</li>
 						</ul>
+						<div class="row">
+							<div class="col-sm-8">
+								<input ng-model="newSuggestedChannelHash" type="text" class="form-control" placeholder="Channel hash...">
+							</div>
+							<div class="col-sm-2">
+								<button class="btn" ng-click="addSuggestedChannel()">
+									Add Suggested Channel
+								</button>
+							</div>
+						</div>
 					</div>
 					<div class="form-group">
 						<label for="contentlist">Content List:</label>
