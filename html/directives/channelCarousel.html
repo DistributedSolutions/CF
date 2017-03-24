@@ -1,0 +1,21 @@
+<div class="row" ng-repeat="t in channelTags" ng-hide="!t.channels || t.channels.length === 0">
+	<h1>{{t.name}}: Chunked Groups:{{t.channels.length}}</h1>
+	<div class="col-sm-12">
+		<div id="carousel{{t.id}}" class="carousel slide" data-ride="carousel" data-interval="false">
+			<!-- Items -->
+			<div class="carousel-inner">
+				<div ng-class="($index==0 ? ('item active') : 'item')" ng-repeat="channelChunk in t.channels">
+					<div class="col-sm-3" ng-repeat="channel in channelChunk">
+						<channel-carousel-cell channel="channel"></channel-carousel-cell>
+					</div>
+				</div>
+			</div> 
+			<a data-target="#carousel{{t.id}}" ng-class="" class="left carousel-control" style="width: 30px;" data-slide="prev">
+				<span class="glyphicon glyphicon-chevron-left"></span>
+			</a>
+			<a data-target="#carousel{{t.id}}" class="right carousel-control" style="width: 30px;" data-slide="next">
+				<span class="glyphicon glyphicon-chevron-right"></span>
+			</a>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,21 @@
+<div class="row" ng-repeat="t in contentTags" ng-hide="!t.content || t.content.length === 0">
+	<h1>{{t.name}}: Chunked Groups:{{t.content.length}}</h1>
+	<div class="col-sm-12">
+		<div id="carousel{{t.id}}" class="carousel slide" data-ride="carousel" data-interval="false">
+			<!-- Items -->
+			<div class="carousel-inner">
+				<div ng-class="($index==0 ? ('item active') : 'item')" ng-repeat="contentChunk in t.content">
+					<div class="col-sm-3" ng-repeat="content in contentChunk">
+						<content-carousel-cell content="content"></content-carousel-cell>
+					</div>
+				</div>
+			</div> 
+			<a data-target="#carousel{{t.id}}" ng-class="" class="left carousel-control" style="width: 30px;" data-slide="prev">
+				<span class="glyphicon glyphicon-chevron-left"></span>
+			</a>
+			<a data-target="#carousel{{t.id}}" class="right carousel-control" style="width: 30px;" data-slide="next">
+				<span class="glyphicon glyphicon-chevron-right"></span>
+			</a>
+		</div>
+	</div>
+</div>
