@@ -14,69 +14,15 @@
 
 	<!--!!!!!!!!!!!!!Channels Section!!!!!!!!!!!!!!!!!!!-->
 	<div ng-hide="selectedOp === 'Content'">
-		<h1>Channels</h1>
+		<h1>Channels: {{channelTags.length}}</h1>
 		<hr />
-		<div class="row" ng-repeat="t in channelTags" ng-hide="!t.channels || t.channels.length === 0">
-			<h1>{{t.name}}: Chunked Groups:{{t.channels.length}}</h1>
-			<div class="col-sm-12">
-				<div id="carousel{{t.id}}" class="carousel slide" data-ride="carousel" data-interval="false">
-					<!-- Items -->
-					<div class="carousel-inner">
-						<div ng-class="($index==0 ? ('item active') : 'item')" ng-repeat="channelChunk in t.channels">
-							<div class="col-sm-3" ng-repeat="channel in channelChunk">
-								<a href="#!/channel/{{channel.rootchain}}">
-									<div class="carouselCell thumbnail">
-										<img src="data:image/png;base64,{{channel.thumbnail.image}}">
-										<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
-											<h3>{{channel.title}}</h3>
-										</div>
-									</div>
-								</a>
-							</div>
-						</div>
-					</div> 
-					<a data-target="#carousel{{t.id}}" ng-class="" class="left carousel-control" style="width: 30px;" data-slide="prev">
-						<span class="glyphicon glyphicon-chevron-left"></span>
-					</a>
-					<a data-target="#carousel{{t.id}}" class="right carousel-control" style="width: 30px;" data-slide="next">
-						<span class="glyphicon glyphicon-chevron-right"></span>
-					</a>
-				</div>
-			</div>
-		</div>
+		<channel-carousel channel-tags="channelTags"></channel-carousel>
 	</div>
 
 	<!--!!!!!!!!!!!!!Content Section!!!!!!!!!!!!!!!!!!!-->
 	<div ng-hide="selectedOp === 'Channels'">
 		<h1>Content: {{contentTags.length}}</h1>
 		<hr />
-		<div class="row" ng-repeat="t in contentTags" ng-hide="!t.content || t.content.length === 0">
-			<h1>{{t.name}}: Chunked Groups:{{t.content.length}}</h1>
-			<div class="col-sm-12">
-				<div id="carousel{{t.id}}" class="carousel slide" data-ride="carousel" data-interval="false">
-					<!-- Items -->
-					<div class="carousel-inner">
-						<div ng-class="($index==0 ? ('item active') : 'item')" ng-repeat="contentChunk in t.content">
-							<div class="col-sm-3" ng-repeat="content in contentChunk">
-								<a href="#!/content/{{content.contentchain}}">
-									<div class="carouselCell thumbnail">
-										<img src="data:image/png;base64,{{content.thumbnail.image}}">
-										<div class="caption" style="text-overflow: ellipsis; overflow: hidden;">
-											<h3>{{content.title}}</h3>
-										</div>
-									</div>
-								</a>
-							</div>
-						</div>
-					</div> 
-					<a data-target="#carousel{{t.id}}" ng-class="" class="left carousel-control" style="width: 30px;" data-slide="prev">
-						<span class="glyphicon glyphicon-chevron-left"></span>
-					</a>
-					<a data-target="#carousel{{t.id}}" class="right carousel-control" style="width: 30px;" data-slide="next">
-						<span class="glyphicon glyphicon-chevron-right"></span>
-					</a>
-				</div>
-			</div>
-		</div>
+		<content-carousel content-tags="contentTags"></content-carousel>
 	</div>
 </div>

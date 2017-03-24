@@ -23,19 +23,19 @@ mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 		controller : "torrentController",
 	})
 	.when("/content/", {
-		templateUrl : "../html/content.html",
+		templateUrl : "../html/mixed/content.html",
 		controller : "contentController",
 	})
 	.when("/content/:key", {
-		templateUrl : "../html/content.html",
+		templateUrl : "../html/mixed/content.html",
 		controller : "contentController",
 	})
 	.when("/channel/", {
-		templateUrl : "../html/channel.html",
+		templateUrl : "../html/mixed/channel.html",
 		controller : "channelController",
 	})
 	.when("/channel/:key", {
-		templateUrl : "../html/channel.html",
+		templateUrl : "../html/mixed/channel.html",
 		controller : "channelController",
 	});
 	

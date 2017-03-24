@@ -32,16 +32,17 @@
   <!-- Services -->
   <script src="../js/services/queryServices.js"></script>
   <script src="../js/services/torrentService.js"></script>
+  <script src="../js/directives.js"></script>
 
   <!-- Controllers -->
-  <script src="../js/controllers/indexController.js"></script>
-  <script src="../js/controllers/mainSearchController.js"></script>
-  <script src="../js/controllers/settingsController.js"></script>
-  <script src="../js/controllers/torrentController.js"></script>
   <script src="../js/controllers/channelController.js"></script>
   <script src="../js/controllers/contentController.js"></script>
+  <script src="../js/controllers/indexController.js"></script>
+  <script src="../js/controllers/mainSearchController.js"></script>
   <script src="../js/controllers/profileController.js"></script>
   <script src="../js/controllers/profilesController.js"></script>
+  <script src="../js/controllers/settingsController.js"></script>
+  <script src="../js/controllers/torrentController.js"></script>
 
   <!-- Include the latest version of WebTorrent -->
   <!-- <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script> -->
@@ -51,7 +52,7 @@
 <body ng-app="CFApp">
   <div ng-controller="indexController">
     <div class="navbar-left">
-      <ul class="nav nav-pills nav-invert">
+      <ul class="nav nav-pills nav-invert navCF">
         <li><a href="#!/"><span>Search</span></a></li>
         <li><a href="#!/profiles"><span>Profiles</span></a></li>
         <li><a href="#!/settings"><span>Settings</span></a></li>
