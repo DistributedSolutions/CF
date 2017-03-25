@@ -20,7 +20,7 @@ angular.module("CFApp")
 		}
 
 		profileScope.addPlaylist = function() {
-			if (profileScope.newPlaylistName.trim().length > 0) {
+			if (profileScope.newPlaylistName != null && profileScope.newPlaylistName.trim().length > 0) {
 				profileScope.channelCopy.playlist.playlists.push({
 					title: profileScope.newPlaylistName,
 					playlist: []
@@ -47,7 +47,7 @@ angular.module("CFApp")
 		}
 
 		profileScope.addSuggestedChannel = function() {
-			if (profileScope.newSuggestedChannelHash.trim().length > 0) {
+			if (profileScope.newSuggestedChannelHash != null && profileScope.newSuggestedChannelHash.trim().length > 0) {
 				profileScope.channelCopy.suggestedchannels.hashlist.push(
 					profileScope.newSuggestedChannelHash
 					);
@@ -59,6 +59,23 @@ angular.module("CFApp")
 			profileScope.channelCopy.suggestedchannels.hashlist.splice(index,1);
 		}
 
+		profileScope.addContent = function() {
+			if (profileScope.newContentName != null && profileScope.newContentName.trim().length > 0) {
+				profileScope.channelCopy.contentlist.contentlist.push({
+					title: profileScope.newContentName
+				});
+				profileScope.newContentName = "";
+			}
+		}
+
+		profileScope.removeContent = function(index) {
+			profileScope.channelCopy.contentlist.contentlist.splice(index,1);
+		}
+
+		profileScope.swapContent = function(index) {
+			profileScope['showContent' + index] = !profileScope['showContent' + index];
+		}
+
 		// START
 		profileScope.username = $routeParams.username;
 		profileScope.loadProfile(profileScope.username);
@@ -66,8 +83,14 @@ angular.module("CFApp")
 			playlist: {
 				playlists: []
 			},
-			suggestedchannels : {
+			suggestedchannels: {
 				hashlist : []
+			},
+			filelist: {
+				filelist: []
+			},
+			contentlist: {
+				contentlist: []
 			}
 		};
 		profileScope.channelCopy = profileScope.channelCopyTemplate;
