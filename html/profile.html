@@ -127,11 +127,15 @@
 					</div>
 					<div class="form-group">
 						<label for="thumbnail">Thumbnail:</label>
-						<input class="form-control" type="text" id="thumbnail" ng-model="channelCopy.thumbnail">
+						<label class="btn btn-default btn-file" id="thumbnail" ng-model="channelCopy.thumbnail.image">
+							Add Thumbnail <input type="file" hidden>
+						</label>
 					</div>
 					<div class="form-group">
-						<label for="tags">Banner:</label>
-						<input class="form-control" type="text" id="tags" ng-model="channelCopy.tags">
+						<label for="banner">Banner:</label>
+						<label class="btn btn-default btn-file" id="banner" ng-model="channelCopy.banner.image">
+							Add Banner <input type="file" hidden>
+						</label>
 					</div>
 					<div class="form-group">
 						<label for="suggestedchannels">Suggested Channels:</label>
@@ -218,7 +222,7 @@
 									<!-- <input class="form-control" type="text" id="filelist" ng-model="content.filelist"> -->
 								</div>
 								<div class="form-group">
-									<button class="btn btn-sm btn-danger" ng-click="removeContent($index)">
+									<button class="btn btn-danger" ng-click="removeContent($index)">
 										Remove Content
 									</button>
 								</div>

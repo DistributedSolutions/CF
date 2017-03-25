@@ -91,6 +91,12 @@ angular.module("CFApp")
 			},
 			contentlist: {
 				contentlist: []
+			},
+			banner: {
+				image:''
+			},
+			thumbnail: {
+				image:''
 			}
 		};
 		profileScope.channelCopy = profileScope.channelCopyTemplate;
