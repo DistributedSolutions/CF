@@ -4,7 +4,7 @@ angular.module("CFApp")
 		var profilesScope = $scope;
 
 		profilesScope.createProfile = function() {
-			var user = {};
+			var user = angular.copy(profilesScope.profileTemplate);
 			user.username = profilesScope.usernameCreate;
 			localDBService.saveProfile(user, () => {
 				$log.log("Successfully added profile :)");
@@ -40,6 +40,9 @@ angular.module("CFApp")
 		}
 
 		// START
+		profilesScope.profileTemplate = {
+			channels: []
+		}
 		profilesScope.profiles = [];
 		profilesScope.usernameExists = false;
 		profilesScope.loadProfiles();

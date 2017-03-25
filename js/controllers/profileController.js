@@ -13,10 +13,20 @@ angular.module("CFApp")
 			});
 		}
 
+		profileScope.applyChannel = function() {
+			$log.log("Creating new channel.");
+		}
+
+		profileScope.selectProfile = function(index) {
+			profileScope.profile = angular.copy(profileScope.profiles[i]);
+			profileScope.showSelectedChannel = true;
+		}
+
 		profileScope.createNewChannel = function() {
-			profileScope.channelCopy = profileScope.channelCopyTemplate;
+			profileScope.channelCopy = angular.copy(profileScope.channelCopyTemplate);
 			profileScope.tab = 0;
 			profileScope.showSelectedChannel = true;
+			profileScope.showCreateChannel = true;
 		}
 
 		profileScope.addPlaylist = function() {
@@ -65,15 +75,33 @@ angular.module("CFApp")
 					title: profileScope.newContentName
 				});
 				profileScope.newContentName = "";
+				profileScope.showContent.push(true);
 			}
 		}
 
 		profileScope.removeContent = function(index) {
+			profileScope.showContent.splice(index,1);
 			profileScope.channelCopy.contentlist.contentlist.splice(index,1);
 		}
 
-		profileScope.swapContent = function(index) {
-			profileScope['showContent' + index] = !profileScope['showContent' + index];
+		profileScope.addFile = function(element) {
+			profileScope.$apply(() => {
+				var files = element.files;
+				for (var i = 0; i < files.length; i++) {
+					profileScope.channelCopy.filelist.filelist.push({
+						file: files[i].name,
+						size: files[i].size,
+						checksum: 0
+					});
+				}
+				var e = $('#' + element.id);
+				e.wrap('<form>').closest('form').get(0).reset();
+				e.unwrap();
+			});
+		}
+
+		profileScope.removeFile = function(index) {
+			profileScope.channelCopy.filelist.filelist.splice(index,1);
 		}
 
 		// START
@@ -99,8 +127,9 @@ angular.module("CFApp")
 				image:''
 			}
 		};
-		profileScope.channelCopy = profileScope.channelCopyTemplate;
+		profileScope.channelCopy = angular.copy(profileScope.channelCopyTemplate);
 		profileScope.showSelectedChannel = false;
 		profileScope.tab = 0;
+		profileScope.showContent = [];
 		//------
 	}]);
