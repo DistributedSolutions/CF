@@ -35,11 +35,32 @@ angular.module("CFApp")
 	};
 });
 angular.module("CFApp")
+.directive('contentPreview', function () {
+	return {
+		templateUrl: "../html/mixed/content.html",
+		scope: {
+			content: '=',
+		}
+	};
+});
+angular.module("CFApp")
 .directive('channelPreview', function () {
 	return {
 		templateUrl: "../html/mixed/channel.html",
 		scope: {
 			channel: '=',
+		}
+	};
+});
+angular.module("CFApp")
+.directive('customOnChange', function() {
+	return {
+		restrict: 'A',
+		link: function (scope, element, attrs) {
+			var onChangeFunc = scope.$eval(attrs.customOnChange);
+			element.bind('change', (e) => {
+				onChangeFunc(e,attrs.index)
+			});
 		}
 	};
 });

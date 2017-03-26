@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 angular.module("CFApp")
 .controller("profileController",["$scope", "$routeParams", "$http", "jsonRPCService", "$log", "localDBService",
 	function($scope, $routeParams, $http, jsonRPCService, $log, localDBService){
@@ -72,36 +74,81 @@ angular.module("CFApp")
 		profileScope.addContent = function() {
 			if (profileScope.newContentName != null && profileScope.newContentName.trim().length > 0) {
 				profileScope.channelCopy.contentlist.contentlist.push({
-					title: profileScope.newContentName
+					title: profileScope.newContentName,
+					thumbnail: {}
 				});
 				profileScope.newContentName = "";
-				profileScope.showContent.push(true);
+				profileScope.showEditContent.push(true);
 			}
 		}
 
 		profileScope.removeContent = function(index) {
-			profileScope.showContent.splice(index,1);
+			profileScope.showEditContent.splice(index,1);
 			profileScope.channelCopy.contentlist.contentlist.splice(index,1);
 		}
 
-		profileScope.addFile = function(element) {
-			profileScope.$apply(() => {
-				var files = element.files;
-				for (var i = 0; i < files.length; i++) {
-					profileScope.channelCopy.filelist.filelist.push({
-						file: files[i].name,
-						size: files[i].size,
-						checksum: 0
+		profileScope.addDir = function(event, index) {
+			var pathForFiles = event.target.files[0].path;
+			fs.readdir(pathForFiles, (err, files) => {
+				if (err) {
+					$log.error("profileController: Error reading directory :(");
+				} else {
+					profileScope.$apply(() => {
+						var content = profileScope.channelCopy.contentlist.contentlist[index];
+						content.filelist = {
+							filelist: []
+						};
+						for (var i = 0; i < files.length; i++) {
+							var stat = fs.statSync(path.join(pathForFiles, files[i]));
+							content.filelist.filelist.push({
+								file: files[i],
+								size: stat.size
+							});
+							var e = $('#contentFileList' + index);
+							e.wrap('<form>').closest('form').get(0).reset();
+							e.unwrap();
+						}
 					});
 				}
-				var e = $('#' + element.id);
-				e.wrap('<form>').closest('form').get(0).reset();
-				e.unwrap();
 			});
 		}
 
-		profileScope.removeFile = function(index) {
-			profileScope.channelCopy.filelist.filelist.splice(index,1);
+		profileScope.removeDir = function(index) {
+			profileScope.channelCopy.contentlist.contentlist[index].filelist = null;
+		}
+
+		profileScope.addChannelThumbnail = function(element) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				profileScope.$apply(() => {
+					// imgtype: element.files[0].name,
+					profileScope.channelCopy.thumbnail.image = e.target.result.split(',')[1];
+				});
+			}
+			reader.readAsDataURL(event.target.files[0]);
+		}
+
+		profileScope.addChannelBanner = function(element) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				profileScope.$apply(() => {
+					// imgtype: element.files[0].name,
+					profileScope.channelCopy.banner.image = e.target.result.split(',')[1];
+				});
+			}
+			reader.readAsDataURL(element.files[0]);
+		}
+
+		profileScope.addContentThumbnail = function(event, index) {
+			var content = profileScope.channelCopy.contentlist.contentlist[index];
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				profileScope.$apply(() => {
+					// imgtype: element.files[0].name,
+					content.thumbnail.image = e.target.result.split(',')[1];
+				});
+			}
+			reader.readAsDataURL(event.target.files[0]);
 		}
 
 		// START
@@ -130,6 +177,7 @@ angular.module("CFApp")
 		profileScope.channelCopy = angular.copy(profileScope.channelCopyTemplate);
 		profileScope.showSelectedChannel = false;
 		profileScope.tab = 0;
-		profileScope.showContent = [];
+		profileScope.showEditContent = [];
+		profileScope.showPreviewContent = [];
 		//------
 	}]);
