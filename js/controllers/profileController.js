@@ -150,6 +150,25 @@ angular.module("CFApp")
 			}
 			reader.readAsDataURL(event.target.files[0]);
 		}
+		
+		profileScope.addExistingChannel = function() {
+			profileScope.modalExistingVerifiedChannel = true;
+			profileScope.modalExistingAddChannel = false;
+		}
+
+		profileScope.verifyExistingChannel = function() {
+			profileScope.modalExistingVerifiedChannel = false;
+			profileScope.modalExistingAddChannel = true;
+			profileScope.modalExistingVerifiedChannelSuccessfully = true;
+			// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+		}
+
+		profileScope.addVerifiedExistingChannel = function() {
+			if (profileScope.modalExistingVerifiedChannelSuccessfully) {
+				$('#existingChannelModal').modal('hide');
+				// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+			}
+		}
 
 		// START
 		profileScope.username = $routeParams.username;

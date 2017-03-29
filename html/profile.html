@@ -362,10 +362,48 @@
 	</div>
 	<hr />
 	<div class="row">
-		<div class="col-sm-12">
-			<button ng-click="createNewChannel();" class="btn btn-default">
+		<div class="col-sm-2">
+			<button ng-click="createNewChannel();" class="btn btn-default" type="button" >
 				Create New Channel
 			</button>
+		</div>
+		<div class="col-sm-4">
+			<button class="btn btn-default" type="button" data-toggle="modal" data-target="#existingChannelModal" data-whatever="@mdo"
+			ng-click="addExistingChannel()">
+				Add Existing Channel
+			</button>
+		</div>
+	</div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="existingChannelModal" tabindex="-1" role="dialog" aria-labelledby="existingChannelModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title" id="existingChannelModalLabel" style="display:inline-block;">Add Existing Channel </h3>
+		<!-- 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true" class="pull-right" style="margin-top:20px;">&times;</span>
+					</button> -->
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label for="modal-hash" class="form-control-label">Channel Hash:</label>
+						<input type="text" class="form-control" id="modal-hash" ng-model="modalHash">
+					</div>
+					<div class="form-group">
+						<label for="modal-hash-key" class="form-control-label">Channel Private Key:</label>
+						<input type="text" class="form-control" id="modal-hash-key" ng-model="modalHashKey" placeholder="Required for secure channels...">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" ng-show="modalExistingVerifiedChannel" ng-click="verifyExistingChannel()">Verify Channel</button>
+				<button type="button" class="btn btn-default" ng-show="modalExistingAddChannel" ng-click="addVerifiedExistingChannel()">Add Channel</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" ng-disabled="modalDisableClose">Close</button>
+			</div>
 		</div>
 	</div>
 </div>

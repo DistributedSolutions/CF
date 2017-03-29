@@ -15,8 +15,11 @@
 		</div>
 	</div>
 
-	<input class="btn btn-default" type="button" value="Create New Profile" ng-click="showCreateProfile = !showCreateProfile;" ng-model="showCreateProfile" ng-init="showCreateProfile = false;"/>
+	<input class="btn btn-default" type="button" value="Create New Profile" ng-click="showCreateProfile = !showCreateProfile;" 
+	ng-model="showCreateProfile" ng-init="showCreateProfile = false;"/>
+
 	<form ng-show="showCreateProfile" ng-submit="createProfile()">
+		<hr />
 		<div class="form-group" style="margin-top: 10px;">
 			<div class="alert alert-danger" role="alert" ng-hide="!usernameExists">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -35,7 +38,7 @@
 			<br />
 			<label for="bitcoinInput">Bitcoin Private Key</label>
 			<input type="text" class="form-control" id="bitcoinInput" aria-describedby="bitcoinHelp" placeholder="Bitcoin private key...">
-			<small id="bitcoinHelp" class="form-text text-muted">Bitcoin information.</small>
+			<small class="form-text text-muted">Bitcoin information.</small>
 		</div>
 		<button type="submit" class="btn btn-defualt" ng-disabled="usernameExists">Submit</button>
 	</form>

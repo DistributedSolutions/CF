@@ -13,6 +13,10 @@ angular.module("CFApp")
 			profilesScope.usernameExists = false;
 			profilesScope.usernameCreate = "";
 			profilesScope.showCreateProfile = false;
+			if (profilesScope.modalExistingVerifiedChannelSuccessfully) {
+				$('#existingChannelModal').modal('hide');
+				// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+			}
 		}
 
 		profilesScope.validateCreate = function() {
