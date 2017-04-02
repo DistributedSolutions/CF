@@ -6,10 +6,8 @@ angular.module("CFApp")
 		var profileScope = $scope;
 
 		profileScope.loadProfile = function(username) {
-			profileScope.profiles = [];
 			localDBService.loadProfile(username, (profile) => {
-				profile.data = JSON.parse(profile.data);
-				profileScope.profile = profile;
+				profileScope.profile = JSON.parse(profile.data);
 				profileScope.$apply(() => {profileScope.profile});
 				$log.log("profilesController: Finished loading row: " + profile);
 			});
@@ -19,7 +17,7 @@ angular.module("CFApp")
 			$log.log("Creating new channel.");
 		}
 
-		profileScope.selectProfile = function(index) {
+		profileScope.selectChannel = function(index) {
 			profileScope.profile = angular.copy(profileScope.profiles[i]);
 			profileScope.showSelectedChannel = true;
 		}
@@ -132,6 +130,7 @@ angular.module("CFApp")
 			var reader = new FileReader();
 			reader.onload = function (e) {
 				profileScope.$apply(() => {
+			// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD) => {
 					// imgtype: element.files[0].name,
 					profileScope.channelCopy.banner.image = e.target.result.split(',')[1];
 				});
@@ -150,7 +149,18 @@ angular.module("CFApp")
 			}
 			reader.readAsDataURL(event.target.files[0]);
 		}
-		
+
+		profileScope.getPaths = function() {
+			var contentPaths = [];
+			for(var i = 0; i < profileScope.channelCopy.contentlist.contentlist.length; i++) {
+				contentPaths.push($('#contentFileList' + i).val())
+			}
+			return contentPaths;
+		}
+
+		///////////////////////
+		// EXISTING CHANNELS //
+		///////////////////////
 		profileScope.addExistingChannel = function() {
 			profileScope.modalExistingVerifiedChannel = true;
 			profileScope.modalExistingAddChannel = false;
@@ -169,10 +179,115 @@ angular.module("CFApp")
 				// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
 			}
 		}
+		
+		///////////////////////
+		///// NEW CHANNELS ////
+		///////////////////////
+		profileScope.addNewChannel = function() {
+			//if it closed halfway
+			profileScope.modalNewVerifiedChannel = false;
+
+			profileScope.modalNewVerifiedChannelResult = null;
+
+			profileScope.modalNewChannelSuccess = false;
+
+			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.verifyChannel, {
+				channel: profileScope.channelCopy,
+				path: profileScope.getPaths(),
+			});
+			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
+			$http(rpc)
+			.then((res) => {
+					if (res.data.error) {
+						//error in rpc
+						$log.error("profileController: Error in verifying new channel: error: [" + 
+							JSON.stringify(res.data.error) + "]");
+						profileScope.modalNewVerifiedChannelResult = res.data.error.data;
+					} else { 
+						//success
+						profileScope.channelCopy = res.data.result;
+						$log.info("profileController: Success in verifying new channel [" + 
+							profileScope.channelCopy.rootchain + "]");
+						profileScope.modalNewVerifiedChannel = true;
+						profileScope.profile.channels.push({
+							name: profileScope.channelCopy.title,
+							channelHash: profileScope.channelCopy.contentchain,
+							state: profileScope.states.LOCAL_CHAIN
+						});
+						profileScope.selectChannelIndex = profileScope.profile.channels.length - 1;
+						localDBService.saveProfile({
+							username: profileScope.username,
+							data: profileScope.profile
+						});
+					}
+				}, (res) => {
+					//error on call SHOULD NEVER HAPPEN
+					$log.error("profileController: Error in new channel call [" + JSON.stringify(res.data.err) + "]");
+				});
+			// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+		}
+
+		profileScope.addVerifiedNewChannel = function() {
+			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.verifyChannel, {
+				channel: profileScope.channelCopy,
+				path: profileScope.getPaths(),
+			});
+			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
+			profileScope.modalNewVerifiedChannelResult = null;
+			$http(rpc)
+			.then((res) => {
+					if (res.data.error) {
+						//error in rpc
+						$log.error("profileController: Error in submiting new channel: error: [" + 
+							JSON.stringify(res.data.error) + "]");
+						profileScope.modalNewVerifiedChannelResult = res.data.error;
+					} else { 
+						//success
+						$log.info("profileController: Success in submiting new channel");
+						profileScope.modalNewChannelSuccess = true;
+						profileScope.showCreateChannel = false;
+						profileScope.profile.channels[profileScope.selectChannelIndex].state = profileScope.states.REMOTE_CHAIN;
+						localDBService.saveProfile({
+							username: profileScope.username,
+							data: profileScope.profile
+						});
+					}
+				}, (res) => {
+					//error on call SHOULD NEVER HAPPEN
+					$log.error("profileController: Error in submiting channel [" + JSON.stringify(res.data.err) + "]");
+				});
+			// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+		}
+		
+		///////////////////////
+		///// EDIT CHANNELS ///
+		///////////////////////
+		profileScope.addEditChannel = function() {
+			profileScope.modalNewEditVerifiedChannel = true;
+			profileScope.modalNewEditAddChannel = false;
+		}
+
+		profileScope.verifyEditChannel = function() {
+			profileScope.modalNewEditVerifiedChannel = false;
+			profileScope.modalNewEditAddChannel = true;
+			profileScope.modalNewEditVerifiedChannelSuccessfully = true;
+			// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+		}
+
+		profileScope.addVerifiedEditChannel = function() {
+			if (profileScope.modalNewEditVerifiedChannelSuccessfully) {
+				$('#newEditChannelModal').modal('hide');
+				// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+			}
+		}
 
 		// START
 		profileScope.username = $routeParams.username;
 		profileScope.loadProfile(profileScope.username);
+		profileScope.states = {
+			LOCAL_CHAIN: 0,
+			REMOTE_CHAIN: 1
+		}
 		profileScope.channelCopyTemplate = {
 			playlist: {
 				playlists: []
@@ -191,7 +306,8 @@ angular.module("CFApp")
 			},
 			thumbnail: {
 				image:''
-			}
+			},
+			contentkey: ''
 		};
 		profileScope.channelCopy = angular.copy(profileScope.channelCopyTemplate);
 		profileScope.showSelectedChannel = false;

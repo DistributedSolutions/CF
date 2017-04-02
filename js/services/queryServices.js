@@ -247,6 +247,8 @@ angular.module("CFApp")
 			jsonRpcScope.getChannels = "get-channels";
 			jsonRpcScope.getContent = "get-content";
 			jsonRpcScope.getContents = "get-contents";
+			jsonRpcScope.verifyChannel = "verify-channel";
+			jsonRpcScope.submitChannel = "submit-channel";
 			//-----------
 
 			jsonRpcScope.getJsonRpc = function(method, params) {

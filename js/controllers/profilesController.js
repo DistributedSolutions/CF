@@ -45,7 +45,9 @@ angular.module("CFApp")
 
 		// START
 		profilesScope.profileTemplate = {
-			channels: []
+			data: {
+				channels: []	
+			}
 		}
 		profilesScope.profiles = [];
 		profilesScope.usernameExists = false;
