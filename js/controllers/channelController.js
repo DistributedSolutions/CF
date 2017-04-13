@@ -3,27 +3,11 @@ angular.module("CFApp")
 	function($scope, $routeParams, $http, jsonRPCService, $log){
 		var channelScope = $scope;
 
-		channelScope.getChannel = function(channelKey) {
-			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getChannel, channelKey);
-			$http(rpc)
-			.then((res) => {
-				if (res.data.error) {
-					//error in rpc
-					$log.error("Error in channel request key: [" + channelKey + "] error: [" + JSON.stringify(res.data.error) + "]");
-				} else {
-					//success
-					$log.info("Success in channel for res data: [" + res.data + "]");
-					channelScope.channel = res.data.result;
-					channelScope.channelString = JSON.stringify(res.data.result, null, 2);
-				}
-			}, (res) => {
-				//error on call SHOULD NEVER HAPPEN
-				$log.error("Error in channel request key, error: [" + JSON.stringify(err) + "]");
-			});
-		}
-
 		// START
 		channelScope.channel = {};
-		channelScope.getChannel($routeParams.key);
+		jsonRPCService.getChannel($routeParams.key, (result) => {
+			channelScope.channel = result;
+			channelScope.channelString = JSON.stringify(result, null, 2);
+		});
 		//------
 	}]);

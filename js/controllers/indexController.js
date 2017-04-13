@@ -1,6 +1,6 @@
 angular.module("CFApp")
-	.controller("indexController",["$scope", "interfaceDBService", "localDBService",
-		function($scope,interfaceDBService, localDBService){
+	.controller("indexController",["$scope", "interfaceDBService", "localDBService", "$location",
+		function($scope,interfaceDBService, localDBService, $location){
 			var indexScope = $scope;
 
 

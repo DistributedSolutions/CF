@@ -39,6 +39,7 @@
   <script src="../js/controllers/profilesController.js"></script>
   <script src="../js/controllers/settingsController.js"></script>
   <script src="../js/controllers/torrentController.js"></script>
+  <script src="../js/controllers/profileChannelContentsController.js"></script>
 
   <!-- Include the latest version of WebTorrent -->
   <!-- <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script> -->
@@ -57,7 +58,7 @@
     </div>
     <div id="container">
       <p>
-        Current location is: {{$ctrl}}<brv>
+        Current location is: {{$location}}<brv>
       </p>
       <button class="btn" ng-click="historyBack();">
         History Back: <span class="glyphicon glyphicon-menu-left"></span>  

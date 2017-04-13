@@ -14,6 +14,10 @@ mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 		templateUrl : "../html/profile.html",
 		controller : "profileController",
 	})
+	.when("/profiles/:username/:channelHash", {
+		templateUrl : "../html/profileChannelContents.html",
+		controller : "profileChannelContentsController",
+	})
 	.when("/settings",{
 		templateUrl : "../html/settings.html",
 		controller : "settingsController",

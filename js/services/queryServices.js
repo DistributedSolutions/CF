@@ -236,20 +236,68 @@ angular.module("CFApp")
 		}]);
 
 angular.module("CFApp")
-	.service("jsonRPCService",["$rootScope", "$http",
-		function($rootScope, $http) {
+	.service("jsonRPCService",["$rootScope", "$http", "$log", 
+		function($rootScope, $http, $log) {
 			var jsonRpcScope = this;
 			jsonRpcScope.id = 0;
 			//--- INIT STATICS
 			jsonRpcScope.hostApi = "http://localhost:8080/api";
 
-			jsonRpcScope.getChannel = "get-channel";
-			jsonRpcScope.getChannels = "get-channels";
-			jsonRpcScope.getContent = "get-content";
-			jsonRpcScope.getContents = "get-contents";
-			jsonRpcScope.verifyChannel = "verify-channel";
-			jsonRpcScope.submitChannel = "submit-channel";
+			jsonRpcScope.getChannelVal = "get-channel";
+			jsonRpcScope.getChannelsVal = "get-channels";
+			jsonRpcScope.getContentVal = "get-content";
+			jsonRpcScope.getContentsVal = "get-contents";
+			jsonRpcScope.verifyChannelVal = "verify-channel";
+			jsonRpcScope.submitChannelVal = "submit-channel";
 			//-----------
+
+			jsonRpcScope.getContent = function(hash, fn) {
+				if (hash) {
+					var rpc = jsonRpcScope.getJsonRpc(jsonRpcScope.getContentVal, hash);
+					$http(rpc)
+					.then((res) => {
+						if (res.data.error) {
+							//error in rpc
+							$log.error("jsonRPCService: Error content hash: [" + hash + "] error: [" + JSON.stringify(res.data.error) + "]");
+						} else {
+							//success
+							$log.info("jsonRPCService: Success in content for res data: [" + res.data + "]");
+							if (fn) {
+								fn(res.data.result);
+							}
+						}
+					}, (res) => {
+						//error on call SHOULD NEVER HAPPEN
+						$log.error("jsonRPCService: Error: [" + JSON.stringify(err) + "]");
+					});
+				} else {
+					$log.error("jsonRPCService: hash not given");
+				}
+			}
+
+			jsonRpcScope.getChannel = function(hash, fn) {
+				if (hash) {
+					var rpc = jsonRpcScope.getJsonRpc(jsonRpcScope.getChannelVal, hash);
+					$http(rpc)
+					.then((res) => {
+						if (res.data.error) {
+							//error in rpc
+							$log.error("jsonRPCService: Error channel hash: [" + hash + "] error: [" + JSON.stringify(res.data.error) + "]");
+						} else {
+							//success
+							$log.info("jsonRPCService: Success in channel for res data: [" + res.data + "]");
+							if (fn) {
+								fn(res.data.result);
+							}
+						}
+					}, (res) => {
+						//error on call SHOULD NEVER HAPPEN
+						$log.error("jsonRPCService: Error: [" + JSON.stringify(err) + "]");
+					});
+				} else {
+					$log.error("jsonRPCService: hash not given");
+				}
+			}
 
 			jsonRpcScope.getJsonRpc = function(method, params) {
 				var rpc = JSON.stringify({

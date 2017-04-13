@@ -1,8 +1,6 @@
-const fs = require('fs');
-
 angular.module("CFApp")
-.controller("profileController",["$scope", "$routeParams", "$http", "jsonRPCService", "$log", "localDBService",
-	function($scope, $routeParams, $http, jsonRPCService, $log, localDBService){
+.controller("profileController",["$scope", "$routeParams", "$http", "jsonRPCService", "$log", "localDBService", "$location",
+	function($scope, $routeParams, $http, jsonRPCService, $log, localDBService, $location){
 		var profileScope = $scope;
 
 		profileScope.loadProfile = function(username) {
@@ -18,8 +16,27 @@ angular.module("CFApp")
 		}
 
 		profileScope.selectChannel = function(index) {
-			profileScope.profile = angular.copy(profileScope.profiles[i]);
+			jsonRPCService.getChannel(profileScope.profile.channels[index].channelHash, (result) => {
+				profileScope.channelCopy = result;
+			});
 			profileScope.showSelectedChannel = true;
+		}
+
+		profileScope.editContent = function(index) {
+			$location.path($location.path() + "/" + profileScope.profile.channels[index].channelHash);
+		}
+
+		profileScope.removeChannel = function(index) {
+			if (profileScope.profile.channels.length >= index) {
+				profileScope.profile.channels.splice(index, 1);
+			} else {
+				$log.error("profileController: attempting to remove channel outside of range");
+			}
+
+			localDBService.saveProfile({
+				username: profileScope.username,
+				data: profileScope.profile
+			});
 		}
 
 		profileScope.createNewChannel = function() {
@@ -69,52 +86,6 @@ angular.module("CFApp")
 			profileScope.channelCopy.suggestedchannels.hashlist.splice(index,1);
 		}
 
-		profileScope.addContent = function() {
-			if (profileScope.newContentName != null && profileScope.newContentName.trim().length > 0) {
-				profileScope.channelCopy.contentlist.contentlist.push({
-					title: profileScope.newContentName,
-					thumbnail: {}
-				});
-				profileScope.newContentName = "";
-				profileScope.showEditContent.push(true);
-			}
-		}
-
-		profileScope.removeContent = function(index) {
-			profileScope.showEditContent.splice(index,1);
-			profileScope.channelCopy.contentlist.contentlist.splice(index,1);
-		}
-
-		profileScope.addDir = function(event, index) {
-			var pathForFiles = event.target.files[0].path;
-			fs.readdir(pathForFiles, (err, files) => {
-				if (err) {
-					$log.error("profileController: Error reading directory :(");
-				} else {
-					profileScope.$apply(() => {
-						var content = profileScope.channelCopy.contentlist.contentlist[index];
-						content.filelist = {
-							filelist: []
-						};
-						for (var i = 0; i < files.length; i++) {
-							var stat = fs.statSync(path.join(pathForFiles, files[i]));
-							content.filelist.filelist.push({
-								file: files[i],
-								size: stat.size
-							});
-							var e = $('#contentFileList' + index);
-							e.wrap('<form>').closest('form').get(0).reset();
-							e.unwrap();
-						}
-					});
-				}
-			});
-		}
-
-		profileScope.removeDir = function(index) {
-			profileScope.channelCopy.contentlist.contentlist[index].filelist = null;
-		}
-
 		profileScope.addChannelThumbnail = function(element) {
 			var reader = new FileReader();
 			reader.onload = function (e) {
@@ -136,26 +107,6 @@ angular.module("CFApp")
 				});
 			}
 			reader.readAsDataURL(element.files[0]);
-		}
-
-		profileScope.addContentThumbnail = function(event, index) {
-			var content = profileScope.channelCopy.contentlist.contentlist[index];
-			var reader = new FileReader();
-			reader.onload = function (e) {
-				profileScope.$apply(() => {
-					// imgtype: element.files[0].name,
-					content.thumbnail.image = e.target.result.split(',')[1];
-				});
-			}
-			reader.readAsDataURL(event.target.files[0]);
-		}
-
-		profileScope.getPaths = function() {
-			var contentPaths = [];
-			for(var i = 0; i < profileScope.channelCopy.contentlist.contentlist.length; i++) {
-				contentPaths.push($('#contentFileList' + i).val())
-			}
-			return contentPaths;
 		}
 
 		///////////////////////
@@ -191,9 +142,10 @@ angular.module("CFApp")
 
 			profileScope.modalNewChannelSuccess = false;
 
-			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.verifyChannel, {
+			//WILL NEED TO CHANGE ONCE NEW API IS CREATED !!!!!!!!!!
+			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.verifyChannelVal, {
 				channel: profileScope.channelCopy,
-				path: profileScope.getPaths(),
+				path: [],
 			});
 			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
 			$http(rpc)
@@ -228,9 +180,9 @@ angular.module("CFApp")
 		}
 
 		profileScope.addVerifiedNewChannel = function() {
-			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.verifyChannel, {
+			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.submitChannelVal, {
 				channel: profileScope.channelCopy,
-				path: profileScope.getPaths(),
+				path: [],
 			});
 			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
 			profileScope.modalNewVerifiedChannelResult = null;
@@ -238,7 +190,7 @@ angular.module("CFApp")
 			.then((res) => {
 					if (res.data.error) {
 						//error in rpc
-						$log.error("profileController: Error in submiting new channel: error: [" + 
+						$log.error("profileController: Error in submitting new channel: error: [" + 
 							JSON.stringify(res.data.error) + "]");
 						profileScope.modalNewVerifiedChannelResult = res.data.error;
 					} else { 
@@ -254,7 +206,7 @@ angular.module("CFApp")
 					}
 				}, (res) => {
 					//error on call SHOULD NEVER HAPPEN
-					$log.error("profileController: Error in submiting channel [" + JSON.stringify(res.data.err) + "]");
+					$log.error("profileController: Error in submitting channel [" + JSON.stringify(res.data.err) + "]");
 				});
 			// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
 		}
