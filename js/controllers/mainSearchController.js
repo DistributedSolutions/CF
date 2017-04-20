@@ -33,7 +33,7 @@ angular.module("CFApp")
 							rpcRows.push(row.hash);
 						});
 						//request all the rows of things :) all of the things!!
-						var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getChannels, {hashlist: rpcRows});
+						var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getChannelsVal, {hashlist: rpcRows});
 						// $log.debug("Sending request [" + JSON.stringify(rpc) + "]");
 						$http(rpc)
 						.then((res) => {
@@ -69,7 +69,7 @@ angular.module("CFApp")
 							rpcRows.push(row.hash);
 						});
 						//request all the rows of things :) all of the things!!
-						var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getContents, {hashlist: rpcRows});
+						var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getContentsVal, {hashlist: rpcRows});
 						$log.debug("Sending request [" + JSON.stringify(rpc) + "]");
 						$http(rpc)
 						.then((res) => {
