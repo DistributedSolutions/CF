@@ -17,3 +17,16 @@ video {
 	width: 50%    !important;
 	height: auto   !important;
 }
+
+.pieceComplete {
+	background-color: blue;
+}
+.piecePartial {
+	background-color: orange;
+}
+.pieceChecking {
+	background-color: yellow;
+}
+.pieceNone {
+	background-color: gray;
+}

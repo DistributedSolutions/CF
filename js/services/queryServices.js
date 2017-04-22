@@ -249,6 +249,7 @@ angular.module("CFApp")
 			jsonRpcScope.getContentsVal = "get-contents";
 			jsonRpcScope.verifyChannelVal = "verify-channel";
 			jsonRpcScope.submitChannelVal = "submit-channel";
+			jsonRpcScope.torrentStreamStatVal = "torrent-stream-stat";
 			//-----------
 
 			jsonRpcScope.getContent = function(hash, fn) {

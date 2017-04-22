@@ -9,65 +9,72 @@
 	</div>
 	
 	<video controls>
-	  <source src="http://localhost:8080/stream">
-	  I'm sorry; your browser doesn't support HTML5 video in WebM with VP8/VP9 or MP4 with H.264.
-	  <!-- You can embed a Flash player here, to play your mp4 video in older browsers -->
-	</video>
-    <div class="progress progress-bar-segmented">
-        <div class="progress-bar" style="width: 10%"></div>
-        <div class="" style="width: 10%"></div>
-        <div class="progress-bar" style="width: 10%"></div>
-        <div class="progress-bar" style="width: 10%"></div>
-    </div>
-	<br />
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">Panel title</h3>
-		</div>
-		<div class="panel-body">
-			<p class="panelDesc">
-				Description: {{content.longdesc}}
-			</p>
+		<source src="http://localhost:8080/stream">
+			I'm sorry; your browser doesn't support HTML5 video in WebM with VP8/VP9 or MP4 with H.264.
+			<!-- You can embed a Flash player here, to play your mp4 video in older browsers -->
+		</video>
+		<div ng-repeat="f in streamFiles">
+			<h3>{{f.fileName}}</h3>
+			{{f.filePieceState.length}}<br>
+			{{f.filePieceState[0].pieceState.completed}}<br>
+			{{f.filePieceState[0].byteSize}}<br>
+			{{f.byteSize}}<br>
+			{{(f.filePieceState[0].byteSize/f.byteSize)*100}}%
+			<div class="progress progress-bar-segmented">
+				<div class="progress-bar" style="width: {{(p.byteSize/f.byteSize)*100}}%" ng-repeat="p in f.filePieceState" 
+				ng-class="p.pieceState.completed ? pieceComplete : p.pieceState.partial ? piecePartial : p.pieceState.checking ? pieceChecking : pieceNone"></div>
+			</div>
 			<hr />
-			<p class="panelDesc">
-				Created: {{content.creationtime}}
-			</p>
-			<hr />
-			<p class="panelDesc">
-				Tags:
-				<span ng-repeat="x in content.tags.tags" class="label label-default tags">
-					{{x}}
-				</span>
-			</p>
 		</div>
-	</div>
-	<br />
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="table-responsive">
-				<table class="table table-striped table-hover table-condensed">
-					<thead>
-						<tr>
-							<th width="50%">File Name</th>
-							<th width="30%">Size</th>
-							<th width="20%">Checksum</th>
-						</tr>
-					</thead>
-				</table>
-				<div class="bodycontainer scrollable">
-					<table class="table table-hover table-striped table-condensed table-scrollable">
-						<tbody>
-							<tr ng-repeat="x in content.filelist.filelist">
-								<td width="50%">{{ x.file }}</td>
-								<td width="30%">{{ x.size }}</td>
-								<td width="20%">{{ x.checksum }}</td>
+		<br />
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Panel title</h3>
+			</div>
+			<div class="panel-body">
+				<p class="panelDesc">
+					Description: {{content.longdesc}}
+				</p>
+				<hr />
+				<p class="panelDesc">
+					Created: {{content.creationtime}}
+				</p>
+				<hr />
+				<p class="panelDesc">
+					Tags:
+					<span ng-repeat="x in content.tags.tags" class="label label-default tags">
+						{{x}}
+					</span>
+				</p>
+			</div>
+		</div>
+		<br />
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="table-responsive">
+					<table class="table table-striped table-hover table-condensed">
+						<thead>
+							<tr>
+								<th width="50%">File Name</th>
+								<th width="30%">Size</th>
+								<th width="20%">Checksum</th>
 							</tr>
-						</tbody>
+						</thead>
 					</table>
+					<div class="bodycontainer scrollable">
+						<table class="table table-hover table-striped table-condensed table-scrollable">
+							<tbody>
+								<tr ng-repeat="x in content.filelist.filelist">
+									<td width="50%">{{ x.file }}</td>
+									<td width="30%">{{ x.size }}</td>
+									<td width="20%">{{ x.checksum }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
+		<br />
+		<!-- {{contentString}} -->
 	</div>
-	<br />
-	<!-- {{contentString}} -->
-</div>
