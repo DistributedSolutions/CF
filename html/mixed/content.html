@@ -21,8 +21,8 @@
 			{{f.byteSize}}<br>
 			{{(f.filePieceState[0].byteSize/f.byteSize)*100}}%
 			<div class="progress progress-bar-segmented">
-				<div class="progress-bar" style="width: {{(p.byteSize/f.byteSize)*100}}%" ng-repeat="p in f.filePieceState" 
-				ng-class="p.pieceState.completed ? pieceComplete : p.pieceState.partial ? piecePartial : p.pieceState.checking ? pieceChecking : pieceNone"></div>
+				<div class="progress-bar" style="width: {{p.percentage}}%" ng-repeat="p in f.filePieceState" 
+				ng-class="p.pieceState.completed ? 'pieceComplete' : p.pieceState.partial ? 'piecePartial' : p.pieceState.checking ? 'pieceChecking' : 'pieceNone'"></div>
 			</div>
 			<hr />
 		</div>

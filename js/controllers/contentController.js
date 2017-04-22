@@ -42,6 +42,6 @@ angular.module("CFApp")
 		});
 		//USED FOR TESTING
 		contentScope.testor();
-		$interval(contentScope.testor, 1000);
+		$interval(contentScope.testor, 2500);
 		//-------
 	}]);

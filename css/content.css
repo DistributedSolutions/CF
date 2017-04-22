@@ -19,14 +19,14 @@ video {
 }
 
 .pieceComplete {
-	background-color: blue;
+	background-color: green;
 }
 .piecePartial {
 	background-color: orange;
 }
 .pieceChecking {
-	background-color: yellow;
+	background-color: red;
 }
 .pieceNone {
-	background-color: gray;
+	background-color: black;
 }
