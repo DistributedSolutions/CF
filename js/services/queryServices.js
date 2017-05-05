@@ -2,6 +2,8 @@ const os = require('os');
 const path = require('path');
 const url = require('url');
 const sqlite3 = require('sqlite3').verbose();
+const low = require('lowdb')
+const db = low('/home/jesse/.DistroSols/appStorage.json')
 
 var DIR_CONSTANTS = {
 	HOME : os.homedir(),
@@ -162,80 +164,6 @@ angular.module("CFApp")
 		}]);
 
 angular.module("CFApp")
-	.service("localDBService",["$rootScope", "$log",
-		function($rootScope, $log) {
-			console.log("Starting localDB service");
-			var localDBScope = this;
-			//setup of localDB
-			//--------------------
-
-			localDBScope.saveProfile = function(user, fn) {
-				if (user.data == null) {
-					user.data = {};
-				}
-				if (user.username == null) {
-					$log.error("ERROR adding profile, no username given.");
-					return;
-				}
-				localDBScope.db.run("INSERT OR REPLACE INTO " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " (username,data) VALUES(?,?)", 
-						user.username, JSON.stringify(user.data), (err) => {
-					if(err) {
-						$log.error("localDBService: Error saveProfile to localDB [" + JSON.stringify(err) + "]");
-					}
-					if(fn) {
-						fn();
-					}
-				});
-			}
-
-			localDBScope.loadProfile = function(username, fn) {
-				if(!username) {
-					$log.error("localDBService: username has bad value [" + username + "]");
-				}
-				var s = "SELECT * FROM " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " WHERE username = ?";
-				localDBScope.db.get(s, username, function(err, row) {
-					if(err === null) {
-						$log.log("Successfully querried localDB profile");
-					} else {
-						$log.error("localDBService: Error querrying profile [" + JSON.stringify(err) + "] with querry [" + s + "]");
-					}
-					if (fn) {
-						return fn(row);	
-					}
-				});
-			}
-
-			localDBScope.loadAllProfiles = function(fn) {
-				var s = "SELECT * FROM " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles;
-				localDBScope.db.all(s,function(err, rows) {
-					if(err === null) {
-						$log.log("Successfully querried localDB Profiles");
-					} else {
-						$log.error("localDBService: Error querrying profiles [" + JSON.stringify(err) + "] with querry [" + s + "]");
-					}
-					if (fn) {
-						return fn(rows);	
-					}
-				});
-			}
-
-			localDBScope.setUpTables = function() {
-				localDBScope.db.run("CREATE TABLE IF NOT EXISTS " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " (username CHAR(100) PRIMARY KEY, data TEXT);", (err) => {
-					if(err) {
-						$log.error("localDBService: Error creating localDB table. [" + JSON.stringify(err) + "]");
-					}
-				});
-
-			}
-
-			localDBScope.init = function() {
-				localDBScope.db = createDB(DB_CONSTANTS.LOCAL_DB.dbName, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
-				localDBScope.setUpTables();
-				$log.info("Finished init for localDB.")
-			}
-		}]);
-
-angular.module("CFApp")
 	.service("jsonRPCService",["$rootScope", "$http", "$log", 
 		function($rootScope, $http, $log) {
 			var jsonRpcScope = this;
@@ -320,104 +248,121 @@ angular.module("CFApp")
 			// 	return $http.
 			// }
 		}]);
+
 // angular.module("CFApp")
-// 	.service("torrentDBService", ["$log",
-// 		function($log) {
-// 			var torrentDBScope = this;
-// 			torrentDBScope.initTables = function(fn) {
-// 				var s = "SELECT COUNT(name) AS c FROM sqlite_master WHERE type='table' AND name='" + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + "';"
-// 				torrentDBScope.db.get(s, (err, row) => {
-// 					$log.debug("Rows returned on start [" + JSON.stringify(row) + "]");
+// 	.service("localDBService",["$rootScope", "$log",
+// 		function($rootScope, $log) {
+// 			console.log("Starting localDB service");
+// 			var localDBScope = this;
+// 			//setup of localDB
+// 			//--------------------
+
+// 			localDBScope.saveProfile = function(user, fn) {
+// 				if (user.data == null) {
+// 					user.data = {};
+// 				}
+// 				if (user.username == null) {
+// 					$log.error("ERROR adding profile, no username given.");
+// 					return;
+// 				}
+// 				localDBScope.db.run("INSERT OR REPLACE INTO " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " (username,data) VALUES(?,?)", 
+// 						user.username, JSON.stringify(user.data), (err) => {
 // 					if(err) {
-// 						$log.error("TorrentDBService: Error retrieving if db exists [" + JSON.stringify(err) + "]");
-// 					} else {
-// 						if (row.c != 1) {
-// 							$log.debug("Creating torrent table");
-// 							var s = "CREATE TABLE " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + " (" +
-// 								"infoHash CHAR(40) PRIMARY KEY," +
-// 								"name VARCHAR(300)," + 
-// 								"path VARCHAR(300)," + 
-// 								"noPeersError BOOLEAN," + 
-// 								"done BOOLEAN," + 
-// 								"progress DECIMAL(10,9));";
-// 							torrentDBScope.db.exec(s, function(err) {
-// 									if(err) {
-// 										$log.error("TorrentDBService: Error creating torrent table [" + JSON.stringify(err) + "]")
-// 									} else {
-// 										fn();
-// 									}
-// 								});
-// 						} else {
-// 							fn();
-// 						}
+// 						$log.error("localDBService: Error saveProfile to localDB [" + JSON.stringify(err) + "]");
+// 					}
+// 					if(fn) {
+// 						fn();
 // 					}
 // 				});
 // 			}
 
-// 			torrentDBScope.getAllTorrents = function(fn) {
-// 				var s = "SELECT * FROM " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent;
-// 				torrentDBScope.db.all(s, (err, rows) => {
-// 					if(err) {
-// 						$log.error("TorrentDBService: Error loading table information [" + JSON.stringify(err) + "]");
+// 			localDBScope.loadProfile = function(username, fn) {
+// 				if(!username) {
+// 					$log.error("localDBService: username has bad value [" + username + "]");
+// 				}
+// 				var s = "SELECT * FROM " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " WHERE username = ?";
+// 				localDBScope.db.get(s, username, function(err, row) {
+// 					if(err === null) {
+// 						$log.log("Successfully querried localDB profile");
 // 					} else {
-// 						fn(rows);
+// 						$log.error("localDBService: Error querrying profile [" + JSON.stringify(err) + "] with querry [" + s + "]");
+// 					}
+// 					if (fn) {
+// 						return fn(row);	
 // 					}
 // 				});
 // 			}
 
-// 			torrentDBScope.torrentExists = function(infoHash,fn) {
-// 				var s = "SELECT * FROM " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
-// 					" WHERE infoHash = ?";
-// 				torrentDBScope.db.serialize(function() {
-// 					torrentDBScope.db.get(s, infoHash, (err,row) => {
-// 						if(err) {
-// 							$log.error("TorrentDBService: Error checking if table row exists [" + JSON.stringify(err) + "]");
-// 						} else {
-// 							fn(row);
-// 						}
-// 					});
-// 				});
-// 			}
-
-// 			torrentDBScope.addTorrent = function(torrent) {
-// 				var s = "INSERT INTO " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
-// 					" (infoHash, name, path, done, progress) VALUES(?, ?, ?, ?, ?);";
-// 				torrentDBScope.db.run(s, torrent.infoHash, torrent.name, torrent.path, torrent.done, torrent.progress, (err) => {
-// 					if(err) {
-// 						$log.error("TorrentDBService: Error inserting hash into db [" + JSON.stringify(err) + "]");
+// 			localDBScope.loadAllProfiles = function(fn) {
+// 				var s = "SELECT * FROM " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles;
+// 				localDBScope.db.all(s,function(err, rows) {
+// 					if(err === null) {
+// 						$log.log("Successfully querried localDB Profiles");
 // 					} else {
-// 						$log.debug("TorrentDBService: Added in torrent to db [" + torrent.infoHash + "]");
+// 						$log.error("localDBService: Error querrying profiles [" + JSON.stringify(err) + "] with querry [" + s + "]");
+// 					}
+// 					if (fn) {
+// 						return fn(rows);	
 // 					}
 // 				});
 // 			}
 
-// 			torrentDBScope.errorTorrent = function(torrent) {
-// 				var s = "UPDATE " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
-// 					" SET noPeersError = ? WHERE infoHash = ?;";
-// 				torrentDBScope.db.run(s, true, torrent.infoHash, (err) => {
+// 			localDBScope.setUpTables = function() {
+// 				localDBScope.db.run("CREATE TABLE IF NOT EXISTS " + DB_CONSTANTS.LOCAL_DB.tableNames.profiles + " (username CHAR(100) PRIMARY KEY, data TEXT);", (err) => {
 // 					if(err) {
-// 						$log.error("TorrentDBService: Error updating torrent [" + JSON.stringify(err) + "]");
-// 					} else {
-// 						$log.debug("TorrentDBService: Error torrent db infohash [" + torrent.infoHash + "]");
+// 						$log.error("localDBService: Error creating localDB table. [" + JSON.stringify(err) + "]");
 // 					}
 // 				});
 // 			}
 
-// 			torrentDBScope.updateTorrent = function(torrent) {
-// 				var s = "UPDATE " + DB_CONSTANTS.TORRENT_DB.tableNames.torrent + 
-// 					" SET done = ?, progress = ? WHERE infoHash = ?;";
-// 				torrentDBScope.db.run(s, torrent.done, torrent.progress, torrent.infoHash, (err) => {
-// 					if(err) {
-// 						$log.error("TorrentDBService: Error updating torrent [" + JSON.stringify(err) + "]");
-// 					} else {
-// 						// $log.debug("TorrentDBService: Updated torrent db infohash [" + torrent.infoHash + "]");
-// 					}
-// 				});
+// 			localDBScope.init = function() {
+// 				localDBScope.db = createDB(DB_CONSTANTS.LOCAL_DB.dbName, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
+// 				localDBScope.setUpTables();
+// 				$log.info("Finished init for localDB.")
 // 			}
+// 		}]);
 
-// 			torrentDBScope.init = function (fn) {
-// 				torrentDBScope.db = createDB(DB_CONSTANTS.TORRENT_DB.dbName, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
-// 				torrentDBScope.initTables(fn);
-// 			}
-// 		}
-// 		]);
+angular.module("CFApp")
+	.service("localDBService",["$rootScope", "$http", "$log", 
+		function($rootScope, $http, $log) {
+			var localDBScope = this;
+
+			localDBScope.saveProfile = function(user, fn) {
+				if(!user.username) {
+					$log.error("localDBService: username has bad value [" + username + "]");
+				}
+				if (user.data == null) {
+					user.data = {};
+				}
+				if (user.username == null) {
+					$log.error("localDBService: ERROR adding profile, no username given.");
+					return;
+				}
+				if (!db.get('users').find({ username : user.username}).value()) {
+					db.get('users').push(user).write()
+				}
+				if(fn) {
+					fn();
+				}
+			}
+
+			localDBScope.loadProfile = function(username) {
+				if(!username) {
+					$log.error("localDBService: username has bad value [" + username + "]");
+				}
+				return db.get("users").find({username: username}).value();
+			}
+
+			localDBScope.loadAllProfiles = function() {
+				return db.get('users').value();
+			}
+
+			localDBScope.setUpTables = function() {
+				db.defaults({ users: [] }).write()
+			}
+
+			localDBScope.init = function() {
+				localDBScope.setUpTables();
+				$log.info("Finished init for localDB.")
+			}
+		}]);

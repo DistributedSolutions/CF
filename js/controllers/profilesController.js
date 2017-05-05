@@ -32,15 +32,7 @@ angular.module("CFApp")
 		}
 
 		profilesScope.loadProfiles = function() {
-			profilesScope.profiles = [];
-			localDBService.loadAllProfiles((rows) => {
-				angular.forEach(rows, (user) => {
-					user.data = JSON.parse(user.data);
-					profilesScope.profiles.push(user);
-				});
-				profilesScope.$apply(() => {profilesScope.profiles});
-				$log.log("profilesController: Finished loading all rows: " + rows);
-			});
+			profilesScope.profiles = localDBService.loadAllProfiles();
 		}
 
 		// START

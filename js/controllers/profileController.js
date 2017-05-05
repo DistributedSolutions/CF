@@ -5,7 +5,6 @@ angular.module("CFApp")
 
 		profileScope.loadProfile = function(username) {
 			localDBService.loadProfile(username, (profile) => {
-				profileScope.profile = JSON.parse(profile.data);
 				profileScope.$apply(() => {profileScope.profile});
 				$log.log("profilesController: Finished loading row: " + profile);
 			});
