@@ -6,10 +6,6 @@ mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 		templateUrl : "../html/mainSearch.html",
 		controller : "mainSearchController"
 	})
-	.when("/profiles", {
-		templateUrl : "../html/profiles.html",
-		controller : "profilesController",
-	})
 	.when("/profiles/:username", {
 		templateUrl : "../html/profile.html",
 		controller : "profileController",
