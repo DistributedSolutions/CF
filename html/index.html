@@ -14,6 +14,8 @@
   <!-- Angular -->
   <script src="../node_modules/angular/angular.min.js"></script>
   <script src="../node_modules/angular-route/angular-route.min.js"></script>
+  <script src="../node_modules/angular-cookies/angular-cookies.js"></script>
+
 
   <!-- CSS -->
   <link rel="stylesheet" href="../css/index.css">
@@ -71,5 +73,71 @@
   <div id="container">
     <div ng-view></div>
   </div>
+
+
+
+  <!-- Change User Modal -->
+  <div class="modal fade" id="selectUserModal" tabindex="-1" role="dialog" aria-labelledby="selectUserModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" style="display:inline-block;">
+            Select User
+          </h3>
+        </div>
+        <div class="modal-body">
+          <div class="page-header">
+            <h1>Profiles <small></small></h1>
+          </div>
+          <h3 ng-hide="profiles.length >= 0">
+            No Profiles found.
+          </h3>
+          <div class="row" ng-hide="profiles.length == 0">
+            <div class="col-sm-12">
+              <div class="list-group">
+                <button class="list-group-item" ng-repeat="p in profiles" ng-click="loginUser(p.username)">
+                  {{p.username}}
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- CREAT NEW USER -->
+          <form ng-show="showCreateProfile" ng-submit="createProfile()">
+            <hr />
+            <div class="form-group" style="margin-top: 10px;">
+              <div class="alert alert-danger" role="alert" ng-hide="!usernameExists">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Username Exists, please choose another
+              </div>
+              <label for="usernameInputEmail1">Username</label>
+              <input type="text" class="form-control" id="usernameInputEmail1" aria-describedby="usernameHelp" placeholder="Username..." ng-model="usernameCreate" ng-change="validateCreate();">
+              <small id="usernameHelp" class="form-text text-muted">Username that will be associated with your profiles.</small>
+              <br />
+              <br />
+              <label for="exampleInput">Email address</label>
+              <input type="email" class="form-control" id="exampleInput" aria-describedby="emailHelp" placeholder="Enter email...">
+              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+              <br />
+              <br />
+              <label for="bitcoinInput">Bitcoin Private Key</label>
+              <input type="text" class="form-control" id="bitcoinInput" aria-describedby="bitcoinHelp" placeholder="Bitcoin private key...">
+              <small class="form-text text-muted">Bitcoin information.</small>
+            </div>
+            <button type="submit" class="btn btn-defualt" ng-disabled="usernameExists">
+              Submit
+            </button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <input class="btn btn-default" type="button" value="Create New Profile" ng-click="showCreateProfile = !showCreateProfile;" ng-model="showCreateProfile" ng-init="showCreateProfile = false;"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
 </body>
 </html>

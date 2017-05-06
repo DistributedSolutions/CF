@@ -1,10 +1,10 @@
-var mainApp=angular.module("CFApp",["ngRoute"]);
+var mainApp=angular.module("CFApp",["ngRoute", "ngCookies"]);
 
 mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider
 	.when("/",{
 		templateUrl : "../html/mainSearch.html",
-		controller : "mainSearchController",
+		controller : "mainSearchController"
 	})
 	.when("/profiles", {
 		templateUrl : "../html/profiles.html",
@@ -41,7 +41,8 @@ mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 	.when("/channel/:key", {
 		templateUrl : "../html/mixed/channel.html",
 		controller : "channelController",
-	});
+	}).
+	otherwise({redirectTo:'/'});
 	
 	$locationProvider.html5Mode({enabled: false, requireBase: false});
 }]);
@@ -56,15 +57,15 @@ let rightClickPosition = null
 
 const menu = new Menu()
 const menuItem = new MenuItem({
-  label: 'Inspect Element',
-  click: () => {
-    remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
-  }
+	label: 'Inspect Element',
+	click: () => {
+		remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
+	}
 })
 menu.append(menuItem)
 
 window.addEventListener('contextmenu', (e) => {
-  e.preventDefault()
-  rightClickPosition = {x: e.x, y: e.y}
-  menu.popup(remote.getCurrentWindow())
+	e.preventDefault()
+	rightClickPosition = {x: e.x, y: e.y}
+	menu.popup(remote.getCurrentWindow())
 }, false)
