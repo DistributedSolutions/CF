@@ -5,6 +5,7 @@ angular.module("CFApp")
 .controller("indexController",["$scope", "interfaceDBService", "localDBService", "$location", "$cookies", "$log",
 	function($scope,interfaceDBService, localDBService, $location, $cookies, $log) {
 		var indexScope = $scope;
+		indexScope.location = $location;
 
 		indexScope.historyBack = function() {
 			console.log("History Button Back");
@@ -58,9 +59,8 @@ angular.module("CFApp")
 
 		// START
 		indexScope.profileTemplate = {
-			data: {
-				channels: []	
-			}
+			channels: [],
+			video: []
 		}
 		indexScope.profiles = [];
 		indexScope.usernameExists = false;

@@ -15,8 +15,8 @@
 // 		}
 // 	]);
 angular.module("CFApp")
-.controller("mainSearchController",["$scope", "$routeParams", "interfaceDBService", "$http", "jsonRPCService", "$log",
-	function($scope, $routeParams, interfaceDBService, $http, jsonRPCService, $log){
+.controller("mainSearchController",["$scope", "$routeParams", "interfaceDBService", "$http", "jsonRpcService", "$log",
+	function($scope, $routeParams, interfaceDBService, $http, jsonRpcService, $log){
 		var mainSearchScope = $scope;
 
 		mainSearchScope.getTopChannelsForTags = function(tags) {
@@ -33,7 +33,7 @@ angular.module("CFApp")
 							rpcRows.push(row.hash);
 						});
 						//request all the rows of things :) all of the things!!
-						var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getChannelsVal, {hashlist: rpcRows});
+						var rpc = jsonRpcService.getJsonRpc(jsonRpcService.getChannelsVal, {hashlist: rpcRows});
 						// $log.debug("Sending request [" + JSON.stringify(rpc) + "]");
 						$http(rpc)
 						.then((res) => {
@@ -69,7 +69,7 @@ angular.module("CFApp")
 							rpcRows.push(row.hash);
 						});
 						//request all the rows of things :) all of the things!!
-						var rpc = jsonRPCService.getJsonRpc(jsonRPCService.getContentsVal, {hashlist: rpcRows});
+						var rpc = jsonRpcService.getJsonRpc(jsonRpcService.getContentsVal, {hashlist: rpcRows});
 						$log.debug("Sending request [" + JSON.stringify(rpc) + "]");
 						$http(rpc)
 						.then((res) => {

@@ -42,7 +42,7 @@ var createDB = function(dbName, mode) {
 			} else {
 				console.log("Successfully created/opened DB with name [" + dbName + "] and mode [" + mode + "]");
 			}
-	});
+		});
 	return db;
 }
 
@@ -68,10 +68,10 @@ ipcRenderer.on('historyBack', (event, torrent) => {
 });
 
 angular.module("CFApp")
-	.service("interfaceDBService",["$rootScope", "$log",
-		function($rootScope, $log) {
-			console.log("Starting interfaceDB service");
-			var interfaceDB = this;
+.service("interfaceDBService",["$rootScope", "$log",
+	function($rootScope, $log) {
+		console.log("Starting interfaceDB service");
+		var interfaceDB = this;
 			//setup of interfaceDB
 			interfaceDB.channelTags = [];
 			interfaceDB.contentTags = [];
@@ -109,8 +109,8 @@ angular.module("CFApp")
 
 			interfaceDB.getTopChannelsForTag = function(tagId, fn) {
 				var s = "SELECT c.channelHash AS hash FROM " + DB_CONSTANTS.INTERFACE_DB.tableNames.channel + " AS c " +
-						"INNER JOIN " + DB_CONSTANTS.INTERFACE_DB.tableNames.channelTagRel + " AS cTR ON cTR.c_id = c.channelHash " +
-						"WHERE cTR.ct_id = ?"
+				"INNER JOIN " + DB_CONSTANTS.INTERFACE_DB.tableNames.channelTagRel + " AS cTR ON cTR.c_id = c.channelHash " +
+				"WHERE cTR.ct_id = ?"
 				interfaceDB.db.all(s, tagId,function(err, rows) {
 					if(err === null) {
 						$log.log("Successfully querried top channels");
@@ -125,8 +125,8 @@ angular.module("CFApp")
 
 			interfaceDB.getTopContentsForTag = function(tagId, fn) {
 				var s = "SELECT c.contentHash AS hash FROM " + DB_CONSTANTS.INTERFACE_DB.tableNames.content + " AS c " +
-						"INNER JOIN " + DB_CONSTANTS.INTERFACE_DB.tableNames.contentTagRel + " AS cTR ON cTR.c_id = c.contentHash " +
-						"WHERE cTR.ct_id = ?"
+				"INNER JOIN " + DB_CONSTANTS.INTERFACE_DB.tableNames.contentTagRel + " AS cTR ON cTR.c_id = c.contentHash " +
+				"WHERE cTR.ct_id = ?"
 				interfaceDB.db.all(s, tagId,function(err, rows) {
 					if(err === null) {
 						$log.log("Successfully querried top contents");
@@ -164,10 +164,10 @@ angular.module("CFApp")
 		}]);
 
 angular.module("CFApp")
-	.service("jsonRPCService",["$rootScope", "$http", "$log", 
-		function($rootScope, $http, $log) {
-			var jsonRpcScope = this;
-			jsonRpcScope.id = 0;
+.service("jsonRpcService",["$rootScope", "$http", "$log", 
+	function($rootScope, $http, $log) {
+		var jsonRpcScope = this;
+		jsonRpcScope.id = 0;
 			//--- INIT STATICS
 			jsonRpcScope.hostApi = "http://localhost:8080/api";
 
@@ -178,7 +178,29 @@ angular.module("CFApp")
 			jsonRpcScope.verifyChannelVal = "verify-channel";
 			jsonRpcScope.submitChannelVal = "submit-channel";
 			jsonRpcScope.torrentStreamStatVal = "get-torrent-stream-stats";
+			jsonRpcScope.postTorrentStreamSeekVal = "post-torrent-stream-seek";
 			//-----------
+
+			jsonRpcScope.postTorrentStreamSeek = function(time) {
+				if (time) {
+					var rpc = jsonRpcScope.getJsonRpc(jsonRpcScope.postTorrentStreamSeekVal, time);
+					$http(rpc)
+					.then((res) => {
+						if (res.data.error) {
+							//error in rpc
+							$log.error("jsonRpcService: postTorrentStreamSeek: Error: [" + JSON.stringify(res.data.error) + "]");
+						} else {
+							//success
+							$log.info("jsonRpcService: postTorrentStreamSeek: Success.");
+						}
+					}, (res) => {
+						//error on call SHOULD NEVER HAPPEN
+						$log.error("jsonRpcService: Error: [" + JSON.stringify(err) + "]");
+					});
+				} else {
+					$log.error("jsonRpcService: time not given");
+				}
+			}
 
 			jsonRpcScope.getContent = function(hash, fn) {
 				if (hash) {
@@ -187,20 +209,20 @@ angular.module("CFApp")
 					.then((res) => {
 						if (res.data.error) {
 							//error in rpc
-							$log.error("jsonRPCService: Error content hash: [" + hash + "] error: [" + JSON.stringify(res.data.error) + "]");
+							$log.error("jsonRpcService: Error content hash: [" + hash + "] error: [" + JSON.stringify(res.data.error) + "]");
 						} else {
 							//success
-							$log.info("jsonRPCService: Success in content for res data: [" + res.data + "]");
+							$log.info("jsonRpcService: Success in content for res data: [" + res.data + "]");
 							if (fn) {
 								fn(res.data.result);
 							}
 						}
 					}, (res) => {
 						//error on call SHOULD NEVER HAPPEN
-						$log.error("jsonRPCService: Error: [" + JSON.stringify(err) + "]");
+						$log.error("jsonRpcService: Error: [" + JSON.stringify(err) + "]");
 					});
 				} else {
-					$log.error("jsonRPCService: hash not given");
+					$log.error("jsonRpcService: hash not given");
 				}
 			}
 
@@ -211,20 +233,20 @@ angular.module("CFApp")
 					.then((res) => {
 						if (res.data.error) {
 							//error in rpc
-							$log.error("jsonRPCService: Error channel hash: [" + hash + "] error: [" + JSON.stringify(res.data.error) + "]");
+							$log.error("jsonRpcService: Error channel hash: [" + hash + "] error: [" + JSON.stringify(res.data.error) + "]");
 						} else {
 							//success
-							$log.info("jsonRPCService: Success in channel for res data: [" + res.data + "]");
+							$log.info("jsonRpcService: Success in channel for res data: [" + res.data + "]");
 							if (fn) {
 								fn(res.data.result);
 							}
 						}
 					}, (res) => {
 						//error on call SHOULD NEVER HAPPEN
-						$log.error("jsonRPCService: Error: [" + JSON.stringify(err) + "]");
+						$log.error("jsonRpcService: Error: [" + JSON.stringify(err) + "]");
 					});
 				} else {
-					$log.error("jsonRPCService: hash not given");
+					$log.error("jsonRpcService: hash not given");
 				}
 			}
 
@@ -323,46 +345,61 @@ angular.module("CFApp")
 // 		}]);
 
 angular.module("CFApp")
-	.service("localDBService",["$rootScope", "$http", "$log", 
-		function($rootScope, $http, $log) {
-			var localDBScope = this;
+.service("localDBService",["$rootScope", "$http", "$log", 
+	function($rootScope, $http, $log) {
+		var localDBScope = this;
 
-			localDBScope.saveProfile = function(user, fn) {
-				if(!user.username) {
-					$log.error("localDBService: username has bad value [" + username + "]");
-				}
-				if (user.data == null) {
-					user.data = {};
-				}
-				if (user.username == null) {
-					$log.error("localDBService: ERROR adding profile, no username given.");
-					return;
-				}
-				if (!db.get('users').find({ username : user.username}).value()) {
-					db.get('users').push(user).write()
-				}
-				if(fn) {
-					fn();
-				}
+		localDBScope.saveProfile = function(user, fn) {
+			if(!user.username) {
+				$log.error("localDBService: username has bad value [" + username + "]");
 			}
+			if (user.data == null) {
+				user.data = {};
+			}
+			if (user.username == null) {
+				$log.error("localDBService: ERROR adding profile, no username given.");
+				return;
+			}
+			if (!db.get('users').find({ username : user.username}).value()) {
+				db.get('users').push(user).write()
+			}
+			if(fn) {
+				fn();
+			}
+		}
 
-			localDBScope.loadProfile = function(username) {
-				if(!username) {
-					$log.error("localDBService: username has bad value [" + username + "]");
-				}
-				return db.get("users").find({username: username}).value();
+		localDBScope.loadProfile = function(username) {
+			if(!username) {
+				$log.error("localDBService: username has bad value [" + username + "]");
 			}
+			return db.get("users").find({username: username}).value();
+		}
 
-			localDBScope.loadAllProfiles = function() {
-				return db.get('users').value();
-			}
+		localDBScope.loadAllProfiles = function() {
+			return db.get('users').value();
+		}
 
-			localDBScope.setUpTables = function() {
-				db.defaults({ users: [] }).write()
-			}
+		localDBScope.setUpDb = function() {
+			db.defaults({ users: [] }).write()
+		}
 
-			localDBScope.init = function() {
-				localDBScope.setUpTables();
-				$log.info("Finished init for localDB.")
+		localDBScope.setTorrentVideoStat = function(hash, time) {
+			if (!db.get("users").find({username:username})
+			.get("video")
+			.find({hash: hash})) {
+				db.get("users").find({username:username}).get("video").push({
+					hash: hash,
+					time: time
+				}).write()
+			} else {
+				db.get("users").find({username:username}).get("video").assign({
+					time: time
+				}).write()
 			}
-		}]);
+		}
+
+		localDBScope.init = function() {
+			localDBScope.setUpDb();
+			$log.info("Finished init for localDB.")
+		}
+	}]);

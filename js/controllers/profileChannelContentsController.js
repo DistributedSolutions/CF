@@ -1,8 +1,8 @@
 const fs = require('fs');
 
 angular.module("CFApp")
-.controller("profileChannelContentsController",["$scope", "$routeParams", "$http", "jsonRPCService", "$log",
-	function($scope, $routeParams, $http, jsonRPCService, $log){
+.controller("profileChannelContentsController",["$scope", "$routeParams", "$http", "jsonRpcService", "$log",
+	function($scope, $routeParams, $http, jsonRpcService, $log){
 		var profileCCScope = $scope;
 
 		profileCCScope.addContent = function() {
@@ -73,7 +73,7 @@ angular.module("CFApp")
 
 		// INIT START
 		profileCCScope.channelCopy = null;
-		jsonRPCService.getChannel($routeParams.channelHash, (result) => {
+		jsonRpcService.getChannel($routeParams.channelHash, (result) => {
 			profileCCScope.channelCopy = result;
 		});
 		//------

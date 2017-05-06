@@ -1,6 +1,6 @@
 angular.module("CFApp")
-.controller("profileController",["$scope", "$routeParams", "$http", "jsonRPCService", "$log", "localDBService", "$location",
-	function($scope, $routeParams, $http, jsonRPCService, $log, localDBService, $location){
+.controller("profileController",["$scope", "$routeParams", "$http", "jsonRpcService", "$log", "localDBService", "$location",
+	function($scope, $routeParams, $http, jsonRpcService, $log, localDBService, $location){
 		var profileScope = $scope;
 
 		profileScope.loadProfile = function(username) {
@@ -15,7 +15,7 @@ angular.module("CFApp")
 		}
 
 		profileScope.selectChannel = function(index) {
-			jsonRPCService.getChannel(profileScope.profile.channels[index].channelHash, (result) => {
+			jsonRpcService.getChannel(profileScope.profile.channels[index].channelHash, (result) => {
 				profileScope.channelCopy = result;
 			});
 			profileScope.showSelectedChannel = true;
@@ -142,7 +142,7 @@ angular.module("CFApp")
 			profileScope.modalNewChannelSuccess = false;
 
 			//WILL NEED TO CHANGE ONCE NEW API IS CREATED !!!!!!!!!!
-			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.verifyChannelVal, {
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.verifyChannelVal, {
 				channel: profileScope.channelCopy,
 				path: [],
 			});
@@ -179,7 +179,7 @@ angular.module("CFApp")
 		}
 
 		profileScope.addVerifiedNewChannel = function() {
-			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.submitChannelVal, {
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.submitChannelVal, {
 				channel: profileScope.channelCopy,
 				path: [],
 			});

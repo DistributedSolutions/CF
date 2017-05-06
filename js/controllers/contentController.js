@@ -1,12 +1,12 @@
 angular.module("CFApp")
-.controller("contentController",["$scope", "$routeParams", "$http", "jsonRPCService", "$log", "$interval",
-	function($scope, $routeParams, $http, jsonRPCService, $log, $interval) {
+.controller("contentController",["$scope", "$routeParams", "$http", "jsonRpcService", "$log", "$interval",
+	function($scope, $routeParams, $http, jsonRpcService, $log, $interval) {
 		var contentScope = $scope;
 		var updatePromise;
 
 		//for now just using luie as a proof of concept
 		contentScope.getStreamContentStat = function(hash) {
-			var rpc = jsonRPCService.getJsonRpc(jsonRPCService.torrentStreamStatVal, hash);
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.torrentStreamStatVal, hash);
 			$http(rpc)
 			.then((res) => {
 				if (res.data.error) {
@@ -36,12 +36,20 @@ angular.module("CFApp")
 
 		//-START-
 		contentScope.content = {};
-		jsonRPCService.getContent($routeParams.key, (result) => {
+		jsonRpcService.getContent($routeParams.key, (result) => {
 			contentScope.content = result;
 			contentScope.contentString = JSON.stringify(result, null, 2);
 		});
 		//USED FOR TESTING
 		contentScope.testor();
 		$interval(contentScope.testor, 2500);
+
+		//used to updated torrent backend to prefer different location torrent
+		var torrentVideo = document.getElementById("torrentVideo");
+		torrentVideo.addEventListener('timeupdate', () => {
+			jsonRpcService.postTorrentStreamSeek(torrentVideo.currentTime);
+			localDBService.setTorrentVideoStat($routeParams.key, torrentVideo.currentTime);
+		}, false);
 		//-------
+
 	}]);
