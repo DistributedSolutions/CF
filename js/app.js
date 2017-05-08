@@ -1,8 +1,12 @@
-var mainApp=angular.module("CFApp",["ngRoute", "ngCookies"]);
+var mainApp=angular.module("CFApp",["ngRoute"]);
 
 mainApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider
 	.when("/",{
+		templateUrl : "../html/mainSearch.html",
+		controller : "mainSearchController"
+	})
+	.when("/swapuser",{
 		templateUrl : "../html/mainSearch.html",
 		controller : "mainSearchController"
 	})

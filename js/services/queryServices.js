@@ -353,9 +353,6 @@ angular.module("CFApp")
 			if(!user.username) {
 				$log.error("localDBService: username has bad value [" + username + "]");
 			}
-			if (user.data == null) {
-				user.data = {};
-			}
 			if (user.username == null) {
 				$log.error("localDBService: ERROR adding profile, no username given.");
 				return;
@@ -369,9 +366,6 @@ angular.module("CFApp")
 		}
 
 		localDBScope.loadProfile = function(username) {
-			if(!username) {
-				$log.error("localDBService: username has bad value [" + username + "]");
-			}
 			return db.get("users").find({username: username}).value();
 		}
 
@@ -380,7 +374,7 @@ angular.module("CFApp")
 		}
 
 		localDBScope.setUpDb = function() {
-			db.defaults({ users: [] }).write()
+			db.defaults({ users: []}).write()
 		}
 
 		localDBScope.setTorrentVideoStat = function(hash, time) {
@@ -396,6 +390,15 @@ angular.module("CFApp")
 					time: time
 				}).write()
 			}
+		}
+
+		localDBScope.getCurrentUser = function() {
+			var cUser = db.get("currentUser").write();
+			return localDBScope.loadProfile(cUser);
+		}
+
+		localDBScope.setCurrentUser = function(username) {
+			db.set("currentUser", username).write();
 		}
 
 		localDBScope.init = function() {

@@ -1,9 +1,6 @@
-
-var COOKIE_CURRENT_USER = "current_user";
-
 angular.module("CFApp")
-.controller("indexController",["$scope", "interfaceDBService", "localDBService", "$location", "$cookies", "$log",
-	function($scope,interfaceDBService, localDBService, $location, $cookies, $log) {
+.controller("indexController",["$scope", "interfaceDBService", "localDBService", "$location", "$log",
+	function($scope,interfaceDBService, localDBService, $location, $log) {
 		var indexScope = $scope;
 		indexScope.location = $location;
 
@@ -18,7 +15,7 @@ angular.module("CFApp")
 		}
 
 		indexScope.checkUser = function() {
-			if (!$cookies.get(COOKIE_CURRENT_USER)) {
+			if (!localDBService.getCurrentUser()) {
 				$('#selectUserModal').modal('show');
 			}
 		}
@@ -52,9 +49,13 @@ angular.module("CFApp")
 		}
 
 		indexScope.loginUser = function(username) {
-			$cookies.put(COOKIE_CURRENT_USER, username);
-			indexScope.profileUsername = username;
+			localDBService.setCurrentUser(username);
 			$('#selectUserModal').modal('hide');
+		}
+
+		indexScope.swapUser = function() {
+			localDBService.setCurrentUser("");
+			$('#selectUserModal').modal('show');
 		}
 
 		// START

@@ -2,7 +2,7 @@ angular.module("CFApp")
 .controller("contentController",["$scope", "$routeParams", "$http", "jsonRpcService", "$log", "$interval",
 	function($scope, $routeParams, $http, jsonRpcService, $log, $interval) {
 		var contentScope = $scope;
-		var updatePromise;
+		var intervalPromise;
 
 		//for now just using luie as a proof of concept
 		contentScope.getStreamContentStat = function(hash) {
@@ -31,7 +31,7 @@ angular.module("CFApp")
 		}
 
 		contentScope.$on('$destroy', function() {
-			contentScope.stop();
+			$interval.cancel(intervalPromise);
 		});
 
 		//-START-
@@ -42,7 +42,7 @@ angular.module("CFApp")
 		});
 		//USED FOR TESTING
 		contentScope.testor();
-		$interval(contentScope.testor, 2500);
+		intervalPromise = $interval(contentScope.testor, 2500);
 
 		//used to updated torrent backend to prefer different location torrent
 		var torrentVideo = document.getElementById("torrentVideo");
