@@ -3,7 +3,7 @@ const path = require('path');
 const url = require('url');
 const sqlite3 = require('sqlite3').verbose();
 const low = require('lowdb')
-const db = low('/home/jesse/.DistroSols/appStorage.json')
+const db = low(path.join(os.homedir(),'.DistroSols', 'appStorage.json'))
 
 var DIR_CONSTANTS = {
 	HOME : os.homedir(),
