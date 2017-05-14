@@ -4,10 +4,7 @@ angular.module("CFApp")
 		var profileScope = $scope;
 
 		profileScope.loadProfile = function(username) {
-			localDBService.loadProfile(username, (profile) => {
-				profileScope.$apply(() => {profileScope.profile});
-				$log.log("profilesController: Finished loading row: " + profile);
-			});
+			profileScope.profile = localDBService.loadProfile(username);
 		}
 
 		profileScope.applyChannel = function() {
@@ -32,10 +29,10 @@ angular.module("CFApp")
 				$log.error("profileController: attempting to remove channel outside of range");
 			}
 
-			localDBService.saveProfile({
-				username: profileScope.username,
-				data: profileScope.profile
-			});
+			// localDBService.saveProfile({
+			// 	username: profileScope.username,
+			// 	data: profileScope.profile
+			// });
 		}
 
 		profileScope.createNewChannel = function() {
@@ -166,10 +163,10 @@ angular.module("CFApp")
 							state: profileScope.states.LOCAL_CHAIN
 						});
 						profileScope.selectChannelIndex = profileScope.profile.channels.length - 1;
-						localDBService.saveProfile({
-							username: profileScope.username,
-							data: profileScope.profile
-						});
+						// localDBService.saveProfile({
+						// 	username: profileScope.username,
+						// 	data: profileScope.profile
+						// });
 					}
 				}, (res) => {
 					//error on call SHOULD NEVER HAPPEN
@@ -198,10 +195,10 @@ angular.module("CFApp")
 						profileScope.modalNewChannelSuccess = true;
 						profileScope.showCreateChannel = false;
 						profileScope.profile.channels[profileScope.selectChannelIndex].state = profileScope.states.REMOTE_CHAIN;
-						localDBService.saveProfile({
-							username: profileScope.username,
-							data: profileScope.profile
-						});
+						// localDBService.saveProfile({
+						// 	username: profileScope.username,
+						// 	data: profileScope.profile
+						// });
 					}
 				}, (res) => {
 					//error on call SHOULD NEVER HAPPEN
@@ -232,7 +229,7 @@ angular.module("CFApp")
 			}
 		}
 
-		// START
+		//------init---------
 		profileScope.username = $routeParams.username;
 		profileScope.loadProfile(profileScope.username);
 		profileScope.states = {
@@ -265,5 +262,5 @@ angular.module("CFApp")
 		profileScope.tab = 0;
 		profileScope.showEditContent = [];
 		profileScope.showPreviewContent = [];
-		//------
+		//-------------------
 	}]);

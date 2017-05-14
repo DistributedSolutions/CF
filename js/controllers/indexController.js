@@ -1,6 +1,6 @@
 angular.module("CFApp")
-.controller("indexController",["$scope", "interfaceDBService", "localDBService", "$location", "$log",
-	function($scope,interfaceDBService, localDBService, $location, $log) {
+.controller("indexController",["$scope", "interfaceDBService", "localDBService", "$location", "$log","jsonRpcService","$http",
+	function($scope,interfaceDBService, localDBService, $location, $log, jsonRpcService, $http) {
 		var indexScope = $scope;
 		indexScope.location = $location;
 
@@ -15,8 +15,14 @@ angular.module("CFApp")
 		}
 
 		indexScope.checkUser = function() {
-			if (!localDBService.getCurrentUser()) {
-				$('#selectUserModal').modal('show');
+			var user = localDBService.getCurrentUser();
+			if (!user) {
+				$('#selectUserModal').modal({
+					show: true,
+					keyboard: false
+				});
+			} else {
+				indexScope.profileUsername = user.username
 			}
 		}
 
@@ -50,12 +56,34 @@ angular.module("CFApp")
 
 		indexScope.loginUser = function(username) {
 			localDBService.setCurrentUser(username);
+			indexScope.profileUsername = username;
 			$('#selectUserModal').modal('hide');
 		}
 
 		indexScope.swapUser = function() {
 			localDBService.setCurrentUser("");
-			$('#selectUserModal').modal('show');
+			$('#selectUserModal').modal({
+					show: true,
+					keyboard: false
+				});
+		}
+
+		indexScope.setConstants = function() {
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.getConstantsVal, {});
+			$http(rpc)
+			.then((res) => {
+					if (res.data.error) {
+						//error in rpc
+						$log.error("Error requesting constants error: [" + JSON.stringify(res.data.error) + "]");
+					} else {
+						//success
+						indexScope.constants = res.data.result;
+						$log.info("Success requesting constants");
+					}
+				}, (res) => {
+					//error on call SHOULD NEVER HAPPEN
+					$log.error("Error requesting constants error: [" + res + "]");
+				});
 		}
 
 		// START
@@ -71,6 +99,7 @@ angular.module("CFApp")
 		interfaceDBService.init();
 		localDBService.init();
 		
+		indexScope.setConstants();
 		indexScope.checkUser();
 		//------
 		}]);

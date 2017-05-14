@@ -1,6 +1,9 @@
 <div class="container-fluid">
 	<div class="page-header">
-		<h1>Profile <small>{{username}}</small></h1>
+		<h1>Profile <small>{{username}} ||||||||||||| {{profile}}</small></h1>
+		<p>
+			{{$parent.constants}}
+		</p>
 	</div>
 	<!-- Profile Channels -->
 	<div ng-show="profile.channels.length == 0">
@@ -72,21 +75,21 @@
 			<div class="panel-body" ng-show="showChannelInformation" ng-init="showChannelInformation = true">
 				<form ng-submit="applyChannel()">
 					<div class="form-group">
-						<label for="title">Title:</label>
+						<label for="title">Title: </label>
 						<!-- Cannot update channel title after created -->
-						<input class="form-control" type="text" id="title" ng-model="channelCopy.title" ng-disabled="!showCreateChannel">
+						<input class="form-control" type="text" id="title" ng-model="channelCopy.title" ng-disabled="!showCreateChannel" maxlength="{{$parent.constants.titlelength}}">
 					</div>
 					<div class="form-group">
 						<label for="site">Site:</label>
-						<input class="form-control" type="text" id="site" ng-model="channelCopy.site">
+						<input class="form-control" type="text" id="site" ng-model="channelCopy.site" maxlength="{{$parent.constants.urllength}}">
 					</div>
 					<div class="form-group">
 						<label for="longdesc">Long Description:</label>
-						<input class="form-control" type="text" id="longdesc" ng-model="channelCopy.longdesc">
+						<input class="form-control" type="text" id="longdesc" ng-model="channelCopy.longdesc" maxlength="{{$parent.constants.longdesclength}}">
 					</div>
 					<div class="form-group">
 						<label for="shortdesc">Short Description:</label>
-						<input class="form-control" type="text" id="shortdesc" ng-model="channelCopy.shortdesc">
+						<input class="form-control" type="text" id="shortdesc" ng-model="channelCopy.shortdesc" maxlength="{{$parent.constants.shortdesclength}}">
 					</div>
 					<div class="form-group">
 						<label for="playlist">Playlist:</label>
@@ -107,7 +110,7 @@
 										</button>
 									</div>
 									<div class="col-sm-5">
-										<input id="newPlaylistItemHash{{$index}}" type="text" class="form-control" placeholder="Content hash..." style="display:inline-block;">
+										<input id="newPlaylistItemHash{{$index}}" type="text" class="form-control" placeholder="Content hash..." style="display:inline-block;" maxlength="{{$parent.constants.hashlength}}">
 									</div>
 									<div class="col-sm-3">
 										<button class="btn btn-md btn-success" ng-click="addPlaylistItem($index)" type="button">
@@ -126,7 +129,7 @@
 														</p>
 													</div>
 													<div class="col-sm-2">
-														<button class="btn btn-sm btn-danger" ng-click="removePlaylistItem($parent.$index,$index)" type="button">
+														<button class="btn btn-sm btn-danger" ng-click="removePlaylistItem($parent.constants.$index,$index)" type="button">
 															Remove Playlist
 														</button>
 													</div>
@@ -139,7 +142,7 @@
 						</ul>
 						<div class="row">
 							<div class="col-sm-8">
-								<input ng-model="newPlaylistName" type="text" class="form-control" placeholder="Playlist name...">
+								<input ng-model="newPlaylistName" type="text" class="form-control" placeholder="Playlist name..." maxlength="{{$parent.constants.filenamelength}}">
 							</div>
 							<div class="col-sm-2">
 								<button class="btn btn-default" ng-click="addPlaylist()" type="button">
@@ -152,14 +155,16 @@
 						<label for="thumbnail">Thumbnail:</label>
 						<br>
 						<label class="btn btn-default btn-file" id="thumbnail">
-							Add Thumbnail <input type="file" hidden accept="image/*" onchange="angular.element(this).scope().addChannelThumbnail(this)">
+							Add Thumbnail 
+							<input type="file" hidden accept="image/*" onchange="angular.element(this).scope().addChannelThumbnail(this)" maxlength="{{$parent.constants.filepathlength}}">
 						</label>
 					</div>
 					<div class="form-group">
 						<label for="banner">Banner:</label>
 						<br>
 						<label class="btn btn-default btn-file" id="banner">
-							Add Banner <input type="file" hidden accept="image/*" id="file" onchange="angular.element(this).scope().addChannelBanner(this)">
+							Add Banner 
+							<input type="file" hidden accept="image/*" id="file" onchange="angular.element(this).scope().addChannelBanner(this)" maxlength="{{$parent.constants.filepathlength}}">
 						</label>
 					</div>
 					<div class="form-group">
@@ -185,7 +190,7 @@
 						</ul>
 						<div class="row">
 							<div class="col-sm-8">
-								<input ng-model="newSuggestedChannelHash" type="text" class="form-control" placeholder="Channel hash...">
+								<input ng-model="newSuggestedChannelHash" type="text" class="form-control" placeholder="Channel hash..." maxlength="{{$parent.constants.hashlength}}">
 							</div>
 							<div class="col-sm-2">
 								<button class="btn btn-default" ng-click="addSuggestedChannel()" type="button">
@@ -301,7 +306,7 @@
 				<form>
 					<div class="form-group">
 						<label for="modal-hash" class="form-control-label">Channel Hash:</label>
-						<input type="text" class="form-control" id="modal-hash" ng-model="modalHash">
+						<input type="text" class="form-control" id="modal-hash" ng-model="modalHash" maxlength="{{$parent.constants.hashlength}}">
 					</div>
 					<div class="form-group">
 						<label for="modal-hash-key" class="form-control-label">Channel Private Key:</label>
