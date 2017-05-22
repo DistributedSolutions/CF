@@ -1,7 +1,10 @@
+const selectpicker = require('bootstrap-select');
+
 angular.module("CFApp")
-.controller("profileController",["$scope", "$routeParams", "$http", "jsonRpcService", "$log", "localDBService", "$location",
-	function($scope, $routeParams, $http, jsonRpcService, $log, localDBService, $location){
+.controller("profileController",["$scope", "$routeParams", "$http", "jsonRpcService", "$log", "localDBService", "$location", "interfaceDBService",
+	function($scope, $routeParams, $http, jsonRpcService, $log, localDBService, $location, interfaceDBService){
 		var profileScope = $scope;
+		profileScope.interfaceDBService = interfaceDBService;
 
 		profileScope.loadProfile = function(username) {
 			profileScope.profile = localDBService.loadProfile(username);
@@ -29,10 +32,7 @@ angular.module("CFApp")
 				$log.error("profileController: attempting to remove channel outside of range");
 			}
 
-			// localDBService.saveProfile({
-			// 	username: profileScope.username,
-			// 	data: profileScope.profile
-			// });
+			localDBService.saveProfile(profileScope.profile);
 		}
 
 		profileScope.createNewChannel = function() {
@@ -105,6 +105,23 @@ angular.module("CFApp")
 			reader.readAsDataURL(element.files[0]);
 		}
 
+		profileScope.addSuggestedChannel = function() {
+			if (profileScope.newSuggestedChannelHash != null && profileScope.newSuggestedChannelHash.trim().length > 0) {
+				profileScope.channelCopy.suggestedchannels.hashlist.push(
+					profileScope.newSuggestedChannelHash
+					);
+				profileScope.newSuggestedChannelHash = "";
+			}
+		}
+
+		profileScope.addTag = function(tagName) {
+			profileScope.channelCopy.tags.tags.push(tagName);
+		}
+
+		profileScope.removeTag = function(index) {
+			profileScope.channelCopy.tags.tags.splice(index,1);
+		}
+
 		///////////////////////
 		// EXISTING CHANNELS //
 		///////////////////////
@@ -130,7 +147,7 @@ angular.module("CFApp")
 		///////////////////////
 		///// NEW CHANNELS ////
 		///////////////////////
-		profileScope.addNewChannel = function() {
+		profileScope.verifyNewChannel = function() {
 			//if it closed halfway
 			profileScope.modalNewVerifiedChannel = false;
 
@@ -139,34 +156,21 @@ angular.module("CFApp")
 			profileScope.modalNewChannelSuccess = false;
 
 			//WILL NEED TO CHANGE ONCE NEW API IS CREATED !!!!!!!!!!
-			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.verifyChannelVal, {
-				channel: profileScope.channelCopy,
-				path: [],
-			});
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.verifyChannelVal, profileScope.channelCopy);
 			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
 			$http(rpc)
 			.then((res) => {
-					if (res.data.error) {
+				if (res.data.error) {
 						//error in rpc
 						$log.error("profileController: Error in verifying new channel: error: [" + 
 							JSON.stringify(res.data.error) + "]");
-						profileScope.modalNewVerifiedChannelResult = res.data.error.data;
+						profileScope.modalNewVerifiedChannelResult = res.data.error;
 					} else { 
 						//success
-						profileScope.channelCopy = res.data.result;
+						profileScope.modalNewChannelCost = res.data.result;
 						$log.info("profileController: Success in verifying new channel [" + 
 							profileScope.channelCopy.rootchain + "]");
 						profileScope.modalNewVerifiedChannel = true;
-						profileScope.profile.channels.push({
-							name: profileScope.channelCopy.title,
-							channelHash: profileScope.channelCopy.contentchain,
-							state: profileScope.states.LOCAL_CHAIN
-						});
-						profileScope.selectChannelIndex = profileScope.profile.channels.length - 1;
-						// localDBService.saveProfile({
-						// 	username: profileScope.username,
-						// 	data: profileScope.profile
-						// });
 					}
 				}, (res) => {
 					//error on call SHOULD NEVER HAPPEN
@@ -176,15 +180,12 @@ angular.module("CFApp")
 		}
 
 		profileScope.addVerifiedNewChannel = function() {
-			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.submitChannelVal, {
-				channel: profileScope.channelCopy,
-				path: [],
-			});
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.createChannelVal, profileScope.channelCopy);
 			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
 			profileScope.modalNewVerifiedChannelResult = null;
 			$http(rpc)
 			.then((res) => {
-					if (res.data.error) {
+				if (res.data.error) {
 						//error in rpc
 						$log.error("profileController: Error in submitting new channel: error: [" + 
 							JSON.stringify(res.data.error) + "]");
@@ -194,7 +195,6 @@ angular.module("CFApp")
 						$log.info("profileController: Success in submiting new channel");
 						profileScope.modalNewChannelSuccess = true;
 						profileScope.showCreateChannel = false;
-						profileScope.profile.channels[profileScope.selectChannelIndex].state = profileScope.states.REMOTE_CHAIN;
 						// localDBService.saveProfile({
 						// 	username: profileScope.username,
 						// 	data: profileScope.profile
@@ -232,11 +232,8 @@ angular.module("CFApp")
 		//------init---------
 		profileScope.username = $routeParams.username;
 		profileScope.loadProfile(profileScope.username);
-		profileScope.states = {
-			LOCAL_CHAIN: 0,
-			REMOTE_CHAIN: 1
-		}
 		profileScope.channelCopyTemplate = {
+			title: "",
 			playlist: {
 				playlists: []
 			},
@@ -255,12 +252,19 @@ angular.module("CFApp")
 			thumbnail: {
 				image:''
 			},
-			contentkey: ''
+			contentkey: '',
+			tags: {
+				tags: []
+			}
 		};
 		profileScope.channelCopy = angular.copy(profileScope.channelCopyTemplate);
-		profileScope.showSelectedChannel = false;
+		profileScope.showSelectedChannel = true;
+		profileScope.showCreateChannel = true;
 		profileScope.tab = 0;
 		profileScope.showEditContent = [];
 		profileScope.showPreviewContent = [];
+		profileScope.$watch(() => {
+			$('.selectpicker').selectpicker('refresh');
+		});
 		//-------------------
 	}]);

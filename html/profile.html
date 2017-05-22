@@ -92,6 +92,35 @@
 						<input class="form-control" type="text" id="shortdesc" ng-model="channelCopy.shortdesc" maxlength="{{$parent.constants.shortdesclength}}">
 					</div>
 					<div class="form-group">
+						<label for="tags">Tags:</label>
+						<ul class="list-group" id="tags">
+							<li class="list-group-item" ng-repeat="t in channelCopy.tags.tags">
+								<div class="row">
+									<div class="col-sm-2">
+										<p>
+											{{t}}
+										</p>
+									</div>
+									<div class="col-sm-2">
+										<button class="btn btn-md btn-danger" ng-click="removeTag($index)" type="button">
+											Remove Tag
+										</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<div class="row" ng-hide="channelCopy.tags.tags.length === $parent.constants.maxchanneltags">
+							<div class="col-sm-5">
+								<select class="selectpicker" ng-model="selectedTag" data-live-search="true" ng-options="obj.name as obj.name for obj in interfaceDBService.channelTags"></select>
+							</div>
+							<div class="col-sm-5">
+								<button class="btn btn-md btn-success" ng-click="addTag(selectedTag)" type="button">
+									Add tag
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
 						<label for="playlist">Playlist:</label>
 						<p ng-show="channelCopy.playlist.playlists.length == 0">
 							No Playlists Set
@@ -129,7 +158,7 @@
 														</p>
 													</div>
 													<div class="col-sm-2">
-														<button class="btn btn-sm btn-danger" ng-click="removePlaylistItem($parent.constants.$index,$index)" type="button">
+														<button class="btn btn-sm btn-danger" ng-click="removePlaylistItem($parent.constants.$index,$infdex)" type="button">
 															Remove Playlist
 														</button>
 													</div>
@@ -200,8 +229,8 @@
 						</div>
 					</div>
 					<hr />
-					<button ng-if="showCreateChannel" type="submit" class="btn btn-success" data-toggle="modal" data-target="#newChannelModal" ng-click="addNewChannel()">
-						Create New Channel :) YAY!
+					<button ng-if="showCreateChannel" type="submit" class="btn btn-success" data-toggle="modal" data-target="#newChannelModal" ng-click="verifyNewChannel()" ng-disabled="channelCopy.title.length === 0">
+						Verify New Channel :) YAY!
 					</button>
 					<button ng-if="!showCreateChannel" type="submit" class="btn btn-success">
 						Update Channel :) YAY!
@@ -278,17 +307,17 @@
 	<hr />
 	<div class="row">
 		<div class="col-sm-4">
-			<button ng-click="createNewChannel();" class="btn btn-default" type="button" >
+			<button ng-click="createNewChannel();" class="btn btn-default" type="button">
 				Create New Channel
 			</button>
 		</div>
 		<div class="col-sm-4">
 			<button class="btn btn-default" type="button" data-toggle="modal" data-target="#existingChannelModal"
 			ng-click="addExistingChannel()">
-				Add Existing Channel
-			</button>
-		</div>
+			Add Existing Channel
+		</button>
 	</div>
+</div>
 </div>
 
 
@@ -301,82 +330,73 @@
 		<!-- 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true" class="pull-right" style="margin-top:20px;">&times;</span>
 					</button> -->
-			</div>
-			<div class="modal-body">
-				<form>
-					<div class="form-group">
-						<label for="modal-hash" class="form-control-label">Channel Hash:</label>
-						<input type="text" class="form-control" id="modal-hash" ng-model="modalHash" maxlength="{{$parent.constants.hashlength}}">
-					</div>
-					<div class="form-group">
-						<label for="modal-hash-key" class="form-control-label">Channel Private Key:</label>
-						<input type="text" class="form-control" id="modal-hash-key" ng-model="modalHashKey" placeholder="Required for secure channels...">
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" ng-show="modalExistingVerifiedChannel" ng-click="verifyExistingChannel()">Verify Channel</button>
-				<button type="button" class="btn btn-default" ng-show="modalExistingAddChannel" ng-click="addVerifiedExistingChannel()">Add Channel</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" ng-disabled="modalExistingDisableClose">Close</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="modal-hash" class="form-control-label">Channel Hash:</label>
+							<input type="text" class="form-control" id="modal-hash" ng-model="modalHash" maxlength="{{$parent.constants.hashlength}}">
+						</div>
+						<div class="form-group">
+							<label for="modal-hash-key" class="form-control-label">Channel Private Key:</label>
+							<input type="text" class="form-control" id="modal-hash-key" ng-model="modalHashKey" placeholder="Required for secure channels...">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" ng-show="modalExistingVerifiedChannel" ng-click="verifyExistingChannel()">Verify Channel</button>
+					<button type="button" class="btn btn-default" ng-show="modalExistingAddChannel" ng-click="addVerifiedExistingChannel()">Add Channel</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" ng-disabled="modalExistingDisableClose">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
-<!-- New Channel Modal -->
-<div class="modal fade" id="newChannelModal" tabindex="-1" role="dialog" aria-labelledby="newChannelModalLabel" aria-hidden="true" data-backdrop="static">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h3 class="modal-title" id="newChannelModalLabel" style="display:inline-block;">
-					{{modalNewChannel ? 'Add New Channel' : 'Add Existing Channel'}}
-				</h3>
+	<!-- New Channel Modal -->
+	<div class="modal fade" id="newChannelModal" tabindex="-1" role="dialog" aria-labelledby="newChannelModalLabel" aria-hidden="true" data-backdrop="static">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="newChannelModalLabel" style="display:inline-block;">
+						{{modalNewChannel ? 'Add New Channel' : 'Add Existing Channel'}}
+					</h3>
 		<!-- 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true" class="pull-right" style="margin-top:20px;">&times;</span>
 					</button> -->
-			</div>
-			<div class="modal-body">
-				<form>
-					<div class="form-group">
-						<div ng-show="!modalNewVerifiedChannelResult">
-							<label for="modal-hash-key" class="form-control-label">
-								Channel Private Key:
-							</label>
-							<div class="well well-sm" id="modal-hash-key">
-								{{channelCopy.contentkey}}
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<div ng-show="!modalNewVerifiedChannelResult">
+								<label for="modal-hash-key" class="form-control-label">
+									New Channel will cost: {{modalNewChannelCost}}
+								</label>
 							</div>
-							<small>
-								This private key is used to stop random people from posting to this channel.
-							</small>
-							<p style="color: red;">
-								DO NOT LOSE THIS PRIVATE KEY FOR THIS CHANNEL
-							</p>
+							<div ng-show="modalNewChannelSuccess" class="alert alert-success" role="alert">
+								<b>Successfully</b> Added! YAY!
+							</div>
+							<div ng-show="modalNewVerifiedChannelResult" class="alert alert-danger" role="alert">
+								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+								<span class="sr-only">Error, please resolve:</span>
+								{{modalNewVerifiedChannelResult}}
+							</div>
 						</div>
-						<div ng-show="modalNewChannelSuccess" class="alert alert-success" role="alert">
-							<b>Successfully</b> Added! YAY!
-						</div>
-						<div ng-show="modalNewVerifiedChannelResult" class="alert alert-danger" role="alert">
-							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							<span class="sr-only">Error:</span>
-							{{modalNewVerifiedChannelResult}}
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" 
-				ng-show="modalNewVerifiedChannel && !modalNewChannelSuccess"
-				ng-click="addVerifiedNewChannel()">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" 
+					ng-show="modalNewVerifiedChannel && !modalNewChannelSuccess"
+					ng-click="addVerifiedNewChannel()">
 					Finish Adding Channel
 				</button>
 				<button type="button" class="btn btn-secondary" 
 				data-dismiss="modal" 
 				ng-disabled="modalNewDisableClose">
-					Close
-				</button>
-			</div>
+				Close
+			</button>
 		</div>
 	</div>
+</div>
 </div>
 
 <!-- Edit Channel Modal -->
@@ -390,50 +410,50 @@
 		<!-- 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true" class="pull-right" style="margin-top:20px;">&times;</span>
 					</button> -->
-			</div>
-			<div class="modal-body">
-				<form>
-					<div class="form-group">
-						<div ng-show="modalNewChannel">
-							<label for="modal-hash-key" class="form-control-label">
-								Channel Private Key:
-							</label>
-							<div class="well well-sm" id="modal-hash-key">
-								{{channelCopy.contentkey}}
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<div ng-show="modalNewChannel">
+								<label for="modal-hash-key" class="form-control-label">
+									Channel Private Key:
+								</label>
+								<div class="well well-sm" id="modal-hash-key">
+									{{channelCopy.contentkey}}
+								</div>
+								<small>
+									This private key is used to stop random people from posting to this channel.
+								</small>
+								<p style="color: red;">
+									DO NOT LOSE THIS PRIVATE KEY FOR THIS CHANNEL
+								</p>
 							</div>
-							<small>
-								This private key is used to stop random people from posting to this channel.
-							</small>
-							<p style="color: red;">
-								DO NOT LOSE THIS PRIVATE KEY FOR THIS CHANNEL
-							</p>
+							<div class="form-group" ng-show="modalNewChannel && channelCopy.contentkey.length != 0">
+								<label for="modal-hash-key-given" class="form-control-label">
+									Channel Private Key:
+								</label>
+								<input class="form-control" type="text" id="modal-hash-key-given" ng-model="modalChannelContentKey">
+							</div>
+							<div ng-show="modalNewEditVerifiedChannelResult != null" class="alert alert-danger" role="alert">
+								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+								<span class="sr-only">Error:</span>
+								{{modalNewEditVerifiedChannelResult}}
+							</div>
 						</div>
-						<div class="form-group" ng-show="modalNewChannel && channelCopy.contentkey.length != 0">
-							<label for="modal-hash-key-given" class="form-control-label">
-								Channel Private Key:
-							</label>
-							<input class="form-control" type="text" id="modal-hash-key-given" ng-model="modalChannelContentKey">
-						</div>
-						<div ng-show="modalNewEditVerifiedChannelResult != null" class="alert alert-danger" role="alert">
-							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							<span class="sr-only">Error:</span>
-							{{modalNewEditVerifiedChannelResult}}
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" 
-				ng-show="modalNewEditVerifiedChannel" 
-				ng-click="modalNewChannel ? addVerifiedNewChannel() : addVerifiedEditChannel()">
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" 
+					ng-show="modalNewEditVerifiedChannel" 
+					ng-click="modalNewChannel ? addVerifiedNewChannel() : addVerifiedEditChannel()">
 					Finish Adding Channel
 				</button>
 				<button type="button" class="btn btn-secondary" 
 				data-dismiss="modal" 
 				ng-disabled="modalNewEditDisableClose">
-					Close
-				</button>
-			</div>
+				Close
+			</button>
 		</div>
 	</div>
+</div>
 </div>

@@ -151,13 +151,15 @@ angular.module("CFApp")
 				interfaceDB.db = createDB(DB_CONSTANTS.INTERFACE_DB.dbName, sqlite3.OPEN_READONLY);
 				interfaceDB.loadChannelTags((rows) => {
 					$log.log("ChannelTags: " + JSON.stringify(rows));
-					interfaceDB.channelTags = rows;	
-					$rootScope.$apply();
+					$rootScope.$apply(() => {
+						interfaceDB.channelTags = rows;	
+					});
 				});
 				interfaceDB.loadContentTags((rows) => {
 					$log.log("ContentTags: " + JSON.stringify(rows));
-					interfaceDB.contentTags = rows;
-					$rootScope.$apply();
+					$rootScope.$apply(() => {
+						interfaceDB.contentTags = rows;
+					});
 				});
 				$log.info("Finished init for interface.")
 			}
@@ -176,7 +178,7 @@ angular.module("CFApp")
 			jsonRpcScope.getContentVal = "get-content";
 			jsonRpcScope.getContentsVal = "get-contents";
 			jsonRpcScope.verifyChannelVal = "verify-channel";
-			jsonRpcScope.submitChannelVal = "submit-channel";
+			jsonRpcScope.createChannelVal = "create-channel";
 			jsonRpcScope.torrentStreamStatVal = "get-torrent-stream-stats";
 			jsonRpcScope.postTorrentStreamSeekVal = "post-torrent-stream-seek";
 			jsonRpcScope.getConstantsVal = "get-constants";
@@ -307,30 +309,30 @@ angular.module("CFApp")
 
 		localDBScope.setTorrentVideoStat = function(hash, time) {
 			if (!db.get("users").find({username:username})
-			.get("video")
-			.find({hash: hash})) {
+				.get("video")
+				.find({hash: hash})) {
 				db.get("users").find({username:username}).get("video").push({
 					hash: hash,
 					time: time
 				}).write()
-			} else {
-				db.get("users").find({username:username}).get("video").assign({
-					time: time
-				}).write()
-			}
+		} else {
+			db.get("users").find({username:username}).get("video").assign({
+				time: time
+			}).write()
 		}
+	}
 
-		localDBScope.getCurrentUser = function() {
-			var cUser = db.get("currentUser").write();
-			return localDBScope.loadProfile(cUser);
-		}
+	localDBScope.getCurrentUser = function() {
+		var cUser = db.get("currentUser").write();
+		return localDBScope.loadProfile(cUser);
+	}
 
-		localDBScope.setCurrentUser = function(username) {
-			db.set("currentUser", username).write();
-		}
+	localDBScope.setCurrentUser = function(username) {
+		db.set("currentUser", username).write();
+	}
 
-		localDBScope.init = function() {
-			localDBScope.setUpDb();
-			$log.info("Finished init for localDB.")
-		}
-	}]);
+	localDBScope.init = function() {
+		localDBScope.setUpDb();
+		$log.info("Finished init for localDB.")
+	}
+}]);

@@ -27,6 +27,7 @@
     "angular-aria": "^1.6.2",
     "angular-route": "^1.6.2",
     "bootstrap": "^3.3.7",
+    "bootstrap-select": "^1.12.2",
     "electron": "^1.4.15",
     "electron-context-menu": "^0.8.0",
     "electron-prebuilt": "^1.4.13",
