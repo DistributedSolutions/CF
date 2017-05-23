@@ -97,9 +97,9 @@
 							<li class="list-group-item" ng-repeat="t in channelCopy.tags.tags">
 								<div class="row">
 									<div class="col-sm-2">
-										<p>
+										<span>
 											{{t}}
-										</p>
+										</span>
 									</div>
 									<div class="col-sm-2">
 										<button class="btn btn-md btn-danger" ng-click="removeTag($index)" type="button">
@@ -111,10 +111,12 @@
 						</ul>
 						<div class="row" ng-hide="channelCopy.tags.tags.length === $parent.constants.maxchanneltags">
 							<div class="col-sm-5">
-								<select class="selectpicker" ng-model="selectedTag" data-live-search="true" ng-options="obj.name as obj.name for obj in interfaceDBService.channelTags"></select>
+								<select class="selectpicker" ng-model="selectedTag" data-live-search="true" ng-options="obj.name as obj.name for obj in interfaceDBService.channelTags | filter:filterDupesTags">
+									<option value="" selected="selected">Choose a tag to add</option>
+								</select>
 							</div>
 							<div class="col-sm-5">
-								<button class="btn btn-md btn-success" ng-click="addTag(selectedTag)" type="button">
+								<button class="btn btn-md btn-success" ng-click="addTag(selectedTag)" type="button" ng-disabled="selectedTag === undefined">
 									Add tag
 								</button>
 							</div>

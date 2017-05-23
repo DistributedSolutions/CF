@@ -1,5 +1,3 @@
-const selectpicker = require('bootstrap-select');
-
 angular.module("CFApp")
 .controller("profileController",["$scope", "$routeParams", "$http", "jsonRpcService", "$log", "localDBService", "$location", "interfaceDBService",
 	function($scope, $routeParams, $http, jsonRpcService, $log, localDBService, $location, interfaceDBService){
@@ -120,6 +118,10 @@ angular.module("CFApp")
 
 		profileScope.removeTag = function(index) {
 			profileScope.channelCopy.tags.tags.splice(index,1);
+		}
+
+		profileScope.filterDupesTags = function(obj) {
+			return profileScope.channelCopy.tags.tags.indexOf(obj.name) === -1;
 		}
 
 		///////////////////////

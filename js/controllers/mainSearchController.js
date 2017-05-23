@@ -21,7 +21,7 @@ angular.module("CFApp")
 
 		mainSearchScope.getTopChannelsForTags = function(tags) {
 			angular.forEach(tags, (tag, tagIndex) => {
-				if (tagIndex) {
+				if (tagIndex != null) {
 					//go through each tags given
 					interfaceDBService.getTopChannelsForTag(tag.id, (rows) => {
 						if (!rows || rows.length == 0) {
@@ -57,7 +57,7 @@ angular.module("CFApp")
 
 		mainSearchScope.getTopContentForTags = function(tags) {
 			angular.forEach(tags, (tag, tagIndex) => {
-				if (tagIndex) {
+				if (tagIndex != null) {
 					//go through each tags given
 					interfaceDBService.getTopContentsForTag(tag.id, (rows) => {
 						if (!rows || rows.length == 0) {
@@ -120,6 +120,8 @@ angular.module("CFApp")
 
 		mainSearchScope.ops = ["Channels", "Content"];
 		mainSearchScope.selectedOp = mainSearchScope.ops[0]
+		mainSearchScope.channelTags = interfaceDBService.channelTags;
+		mainSearchScope.contentTags = interfaceDBService.contentTags;
 		if (mainSearchScope.channelTags) {
 			mainSearchScope.getTopChannelsForTags(mainSearchScope.channelTags);
 		}
