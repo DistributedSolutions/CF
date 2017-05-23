@@ -110,14 +110,11 @@
 							</li>
 						</ul>
 						<div class="row" ng-hide="channelCopy.tags.tags.length === $parent.constants.maxchanneltags">
-							{{selectedTag}}
-							<div class="col-sm-4">
-								<select class="selectpicker" ng-model="selectedTag" data-live-search="true" ng-options="obj.name as obj.name for obj in interfaceDBService.channelTags | filter:filterDupesTags">
+							<div class="col-md-12">
+								<select class="selectpicker" ng-model="selectedTag" data-live-search="true" ng-options="obj.name as obj.name for obj in interfaceDBService.channelTags | filter:filterDupesTags" style="display: inline;">
 									<option value="" selected="selected">Choose a tag to add</option>
 								</select>
-							</div>
-							<div class="col-sm-3">
-								<button class="btn btn-md btn-success" ng-click="addTag(selectedTag)" type="button" ng-disabled="selectedTag == null" style="width:100%;">
+								<button class="btn btn-md btn-success" ng-click="addTag(selectedTag)" type="button" ng-disabled="selectedTag == null" style="width:20%; display: inline;">
 									Add tag
 								</button>
 							</div>
