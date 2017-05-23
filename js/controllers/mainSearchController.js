@@ -93,15 +93,6 @@ angular.module("CFApp")
 
 		//init
 		mainSearchScope.interfaceDBService = interfaceDBService;
-		// mainSearchScope.channelTags = [
-		// {
-		// 	id:1,
-		// 	name:"action"
-		// },
-		// {
-		// 	id:2,
-		// 	name:"drama"
-		// }];
 		mainSearchScope.channelTags = interfaceDBService.channelTags;
 		mainSearchScope.contentTags = interfaceDBService.contentTags;
 

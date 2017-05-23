@@ -29,7 +29,6 @@ angular.module("CFApp")
 			} else {
 				$log.error("profileController: attempting to remove channel outside of range");
 			}
-
 			localDBService.saveProfile(profileScope.profile);
 		}
 
@@ -124,6 +123,12 @@ angular.module("CFApp")
 			return profileScope.channelCopy.tags.tags.indexOf(obj.name) === -1;
 		}
 
+		profileScope.cancelChannel = function() {
+			profileScope.showSelectedChannel = false;
+			profileScope.showCreateChannel = false;
+			profileScope.channelCopy = angular.copy(profileScope.channelCopyTemplate);
+		}
+
 		///////////////////////
 		// EXISTING CHANNELS //
 		///////////////////////
@@ -197,10 +202,12 @@ angular.module("CFApp")
 						$log.info("profileController: Success in submiting new channel");
 						profileScope.modalNewChannelSuccess = true;
 						profileScope.showCreateChannel = false;
-						// localDBService.saveProfile({
-						// 	username: profileScope.username,
-						// 	data: profileScope.profile
-						// });
+						profileScope.showSelectedChannel = false;
+						profileScope.profile.channels.push({
+							hash: profileScope.channelCopy.channelHash,
+							title: profileScope.channelCopy.title
+						});
+						localDBService.saveProfile(profileScope.profile);
 					}
 				}, (res) => {
 					//error on call SHOULD NEVER HAPPEN
@@ -260,8 +267,8 @@ angular.module("CFApp")
 			}
 		};
 		profileScope.channelCopy = angular.copy(profileScope.channelCopyTemplate);
-		profileScope.showSelectedChannel = true;
-		profileScope.showCreateChannel = true;
+		profileScope.showSelectedChannel = false;
+		profileScope.showCreateChannel = false;
 		profileScope.tab = 0;
 		profileScope.showEditContent = [];
 		profileScope.showPreviewContent = [];

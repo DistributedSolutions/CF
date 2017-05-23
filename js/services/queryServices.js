@@ -288,7 +288,10 @@ angular.module("CFApp")
 				return;
 			}
 			if (!db.get('users').find({ username : user.username}).value()) {
-				db.get('users').push(user).write()
+				db.get('users').push(user).write();
+			} else {
+				db.get('users').remove({ username : user.username}).write();
+				db.get('users').push(user).write();
 			}
 			if(fn) {
 				fn();
