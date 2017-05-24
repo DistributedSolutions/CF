@@ -24,6 +24,9 @@ angular.module("CFApp")
 		}
 
 		profileScope.removeChannel = function(index) {
+			if(profileScope.channelCopy.rootchain == profileScope.profile.channels[index].rootchain) {
+				profileScope.showSelectedChannel = false;
+			}
 			if (profileScope.profile.channels.length >= index) {
 				profileScope.profile.channels.splice(index, 1);
 			} else {
@@ -200,11 +203,12 @@ angular.module("CFApp")
 					} else { 
 						//success
 						$log.info("profileController: Success in submiting new channel");
+						profileScope.channelCopy = res.data.result;
 						profileScope.modalNewChannelSuccess = true;
 						profileScope.showCreateChannel = false;
 						profileScope.showSelectedChannel = false;
 						profileScope.profile.channels.push({
-							hash: profileScope.channelCopy.channelHash,
+							hash: profileScope.channelCopy.rootchain,
 							title: profileScope.channelCopy.title
 						});
 						localDBService.saveProfile(profileScope.profile);
