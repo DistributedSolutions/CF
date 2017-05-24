@@ -9,11 +9,11 @@ angular.module("CFApp")
 		}
 
 		profileScope.applyChannel = function() {
-			$log.log("Creating new channel.");
+			$log.log("Applying channel form");
 		}
 
 		profileScope.selectChannel = function(index) {
-			jsonRpcService.getChannel(profileScope.profile.channels[index].channelHash, (result) => {
+			jsonRpcService.getChannel(profileScope.profile.channels[index].hash, (result) => {
 				profileScope.channelCopy = result;
 			});
 			profileScope.showSelectedChannel = true;
@@ -160,12 +160,9 @@ angular.module("CFApp")
 		profileScope.verifyNewChannel = function() {
 			//if it closed halfway
 			profileScope.modalNewVerifiedChannel = false;
-
+			profileScope.modalNewChannelSuccess = false;
 			profileScope.modalNewVerifiedChannelResult = null;
 
-			profileScope.modalNewChannelSuccess = false;
-
-			//WILL NEED TO CHANGE ONCE NEW API IS CREATED !!!!!!!!!!
 			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.verifyChannelVal, profileScope.channelCopy);
 			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
 			$http(rpc)
@@ -177,7 +174,7 @@ angular.module("CFApp")
 						profileScope.modalNewVerifiedChannelResult = res.data.error;
 					} else { 
 						//success
-						profileScope.modalNewChannelCost = res.data.result;
+						profileScope.modalChannelCost = res.data.result;
 						$log.info("profileController: Success in verifying new channel [" + 
 							profileScope.channelCopy.rootchain + "]");
 						profileScope.modalNewVerifiedChannel = true;
@@ -202,7 +199,7 @@ angular.module("CFApp")
 						profileScope.modalNewVerifiedChannelResult = res.data.error;
 					} else { 
 						//success
-						$log.info("profileController: Success in submiting new channel");
+						$log.info("profileController: Success in creating new channel");
 						profileScope.channelCopy = res.data.result;
 						profileScope.modalNewChannelSuccess = true;
 						profileScope.showCreateChannel = false;
@@ -223,23 +220,57 @@ angular.module("CFApp")
 		///////////////////////
 		///// EDIT CHANNELS ///
 		///////////////////////
-		profileScope.addEditChannel = function() {
-			profileScope.modalNewEditVerifiedChannel = true;
-			profileScope.modalNewEditAddChannel = false;
-		}
-
 		profileScope.verifyEditChannel = function() {
-			profileScope.modalNewEditVerifiedChannel = false;
-			profileScope.modalNewEditAddChannel = true;
-			profileScope.modalNewEditVerifiedChannelSuccessfully = true;
-			// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
+			profileScope.modalEditVerifiedChannel = false;
+			profileScope.modalEditChannelSuccess = false;
+			profileScope.modalEditVerifiedChannelResult = null;
+
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.verifyChannelVal, profileScope.channelCopy);
+			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
+			$http(rpc)
+			.then((res) => {
+				if (res.data.error) {
+						//error in rpc
+						$log.error("profileController: Error in verifying edit channel: error: [" + 
+							JSON.stringify(res.data.error) + "]");
+						profileScope.modalEditVerifiedChannelResult = res.data.error;
+					} else { 
+						//success
+						profileScope.modalChannelCost = res.data.result;
+						$log.info("profileController: Success in verifying edit channel [" + 
+							profileScope.channelCopy.rootchain + "]");
+						profileScope.modalEditVerifiedChannel = true;
+					}
+				}, (res) => {
+					//error on call SHOULD NEVER HAPPEN
+					$log.error("profileController: Error in edit channel call [" + JSON.stringify(res.data.err) + "]");
+				});
 		}
 
 		profileScope.addVerifiedEditChannel = function() {
-			if (profileScope.modalNewEditVerifiedChannelSuccessfully) {
-				$('#newEditChannelModal').modal('hide');
-				// !!! MUST DISABLE CLOSE BUTTON WHILE ATTEMPTING TO ADD
-			}
+			var rpc = jsonRpcService.getJsonRpc(jsonRpcService.updateChannelVal, profileScope.channelCopy);
+			$log.info("profileController: Sending request [" + JSON.stringify(rpc) + "]");
+			profileScope.modalEditVerifiedChannelResult = null;
+			$http(rpc)
+			.then((res) => {
+				if (res.data.error) {
+						//error in rpc
+						$log.error("profileController: Error in update channel: error: [" + 
+							JSON.stringify(res.data.error) + "]");
+						profileScope.modalEditVerifiedChannelResult = res.data.error;
+					} else { 
+						//success
+						$log.info("profileController: Success in updating update channel");
+						profileScope.channelCopy = res.data.result;
+						profileScope.modalEditChannelSuccess = true;
+						profileScope.showCreateChannel = false;
+						profileScope.showSelectedChannel = false;
+						profileScope.modalEditVerifiedChannel = false;
+					}
+				}, (res) => {
+					//error on call SHOULD NEVER HAPPEN
+					$log.error("profileController: Error in updating channel [" + JSON.stringify(res.data.err) + "]");
+				});
 		}
 
 		//------init---------

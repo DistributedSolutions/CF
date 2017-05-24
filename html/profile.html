@@ -232,7 +232,7 @@
 					<button ng-if="showCreateChannel" type="submit" class="btn btn-success" data-toggle="modal" data-target="#newChannelModal" ng-click="verifyNewChannel()" ng-disabled="channelCopy.title.length === 0">
 						Verify New Channel :) YAY!
 					</button>
-					<button ng-if="!showCreateChannel" type="submit" class="btn btn-success">
+					<button ng-if="!showCreateChannel" type="submit" class="btn btn-success" data-toggle="modal" data-target="#editChannelModal" ng-click="verifyEditChannel()">
 						Update Channel :) YAY!
 					</button>
 					<button ng-click="cancelChannel()" class="btn btn-danger" style="float: right;">
@@ -358,7 +358,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title" id="newChannelModalLabel" style="display:inline-block;">
-					{{modalNewChannel ? 'Add New Channel' : 'Add Existing Channel'}}
+					Add New Channel
 				</h3>
 			</div>
 			<div class="modal-body">
@@ -366,7 +366,7 @@
 					<div class="form-group">
 						<div ng-show="!modalNewVerifiedChannelResult">
 							<label for="modal-hash-key" class="form-control-label">
-								New Channel will cost: {{modalNewChannelCost}}
+								New Channel will cost: {{modalChannelCost}}
 							</label>
 						</div>
 						<div ng-show="modalNewChannelSuccess" class="alert alert-success" role="alert">
@@ -384,7 +384,7 @@
 				<button type="button" class="btn btn-default" ng-show="modalNewVerifiedChannel && !modalNewChannelSuccess" ng-click="addVerifiedNewChannel()">
 					Finish Adding Channel
 				</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" ng-disabled="modalNewDisableClose">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">
 					Close
 				</button>
 			</div>
@@ -393,57 +393,41 @@
 </div>
 
 <!-- Edit Channel Modal -->
-<div class="modal fade" id="newEditChannelModal" tabindex="-1" role="dialog" aria-labelledby="newEditChannelModalLabel" aria-hidden="true" data-backdrop="static">
+<div class="modal fade" id="editChannelModal" tabindex="-1" role="dialog" aria-labelledby="newEditChannelModalLabel" aria-hidden="true" data-backdrop="static">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title" id="newEditChannelModalLabel" style="display:inline-block;">
-					{{modalNewChannel ? 'Add New Channel' : 'Add Existing Channel'}}
+					Edit Existing Channel
 				</h3>
 			</div>
 			<div class="modal-body">
 				<form>
 					<div class="form-group">
-						<div ng-show="modalNewChannel">
+						<div ng-show="!modalEditVerifiedChannelResult">
 							<label for="modal-hash-key" class="form-control-label">
-								Channel Private Key:
+								Updating Channel will cost: {{modalChannelCost}}
 							</label>
-							<div class="well well-sm" id="modal-hash-key">
-								{{channelCopy.contentkey}}
-							</div>
-							<small>
-								This private key is used to stop random people from posting to this channel.
-							</small>
-							<p style="color: red;">
-								DO NOT LOSE THIS PRIVATE KEY FOR THIS CHANNEL
-							</p>
 						</div>
-						<div class="form-group" ng-show="modalNewChannel && channelCopy.contentkey.length != 0">
-							<label for="modal-hash-key-given" class="form-control-label">
-								Channel Private Key:
-							</label>
-							<input class="form-control" type="text" id="modal-hash-key-given" ng-model="modalChannelContentKey">
+						<div ng-show="modalEditChannelSuccess" class="alert alert-success" role="alert">
+							<b>Successfully</b> updated channel! YAY!
 						</div>
-						<div ng-show="modalNewEditVerifiedChannelResult != null" class="alert alert-danger" role="alert">
+						<div ng-show="modalEditVerifiedChannelResult" class="alert alert-danger" role="alert">
 							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							<span class="sr-only">Error:</span>
-							{{modalNewEditVerifiedChannelResult}}
+							<span class="sr-only">Error, please resolve:</span>
+							{{modalEditVerifiedChannelResult}}
 						</div>
 					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" 
-				ng-show="modalNewEditVerifiedChannel" 
-				ng-click="modalNewChannel ? addVerifiedNewChannel() : addVerifiedEditChannel()">
-				Finish Adding Channel
-			</button>
-			<button type="button" class="btn btn-secondary" 
-			data-dismiss="modal" 
-			ng-disabled="modalNewEditDisableClose">
-			Close
-		</button>
+				<button type="button" class="btn btn-default" ng-show="modalEditVerifiedChannel && !modalEditChannelSuccess" ng-click="addVerifiedEditChannel()">
+					Finish Updating Channel
+				</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">
+					Close
+				</button>
+			</div>
+		</div>
 	</div>
-</div>
-</div>
 </div>

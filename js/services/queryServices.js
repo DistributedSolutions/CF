@@ -179,6 +179,7 @@ angular.module("CFApp")
 			jsonRpcScope.getContentsVal = "get-contents";
 			jsonRpcScope.verifyChannelVal = "verify-channel";
 			jsonRpcScope.createChannelVal = "create-channel";
+			jsonRpcScope.updateChannelVal = "update-channel";
 			jsonRpcScope.torrentStreamStatVal = "get-torrent-stream-stats";
 			jsonRpcScope.postTorrentStreamSeekVal = "post-torrent-stream-seek";
 			jsonRpcScope.getConstantsVal = "get-constants";
@@ -268,10 +269,6 @@ angular.module("CFApp")
 					headers: {'Content-Type': 'application/json'}
 				};
 			}
-
-			// jsonRPCScope.httpRequest = function(jsonRPC) {
-			// 	return $http.
-			// }
 		}]);
 
 angular.module("CFApp")
