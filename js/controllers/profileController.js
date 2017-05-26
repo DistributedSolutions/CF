@@ -12,15 +12,15 @@ angular.module("CFApp")
 			$log.log("Applying channel form");
 		}
 
-		profileScope.selectChannel = function(index) {
-			jsonRpcService.getChannel(profileScope.profile.channels[index].hash, (result) => {
+		profileScope.selectChannel = function(hash) {
+			jsonRpcService.getChannel(hash, (result) => {
 				profileScope.channelCopy = result;
 			});
 			profileScope.showSelectedChannel = true;
 		}
 
-		profileScope.editContent = function(index) {
-			$location.path($location.path() + "/" + profileScope.profile.channels[index].channelHash);
+		profileScope.editChannelContents = function(hash) {
+			$location.path($location.path() + "/" + hash);
 		}
 
 		profileScope.removeChannel = function(index) {

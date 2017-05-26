@@ -29,7 +29,7 @@
 			<hr />
 			<p class="panelDesc">
 				Tags:
-				<span ng-repeat="x in channel.tags.tags" class="label label-default tags">
+				<span ng-repeat="x in channel.tags.tags track by $index" class="label label-default tags">
 					{{x}}
 				</span>
 			</p>

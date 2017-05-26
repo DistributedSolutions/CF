@@ -28,12 +28,12 @@
 								<tr ng-repeat="x in profile.channels track by $index">
 									<td width="40%">{{ x.title }}</td>
 									<td width="20%" class="text-center">
-										<button class="btn btn-sm" ng-click="selectChannel($index)">
+										<button class="btn btn-sm" ng-click="selectChannel(x.hash)">
 											Edit Channel
 										</button>
 									</td>
 									<td width="20%" class="text-center">
-										<button class="btn btn-sm" ng-click="editContent($index)">
+										<button class="btn btn-sm" ng-click="editChannelContents(x.hash)">
 											Edit Channel Content
 										</button>
 									</td>
@@ -94,7 +94,7 @@
 					<div class="form-group">
 						<label for="tags">Tags:</label>
 						<ul class="list-group" id="tags">
-							<li class="list-group-item" ng-repeat="t in channelCopy.tags.tags">
+							<li class="list-group-item" ng-repeat="t in channelCopy.tags.tags track by $index">
 								<div class="row">
 									<div class="col-sm-2">
 										<span>
